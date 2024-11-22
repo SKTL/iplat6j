@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap  PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="XCVA02">
+
+    <sql id="condition">
+        <isNotEmpty prepend=" AND " property="recCreator">
+            REC_CREATOR = #recCreator#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="recCreatorName">
+            REC_CREATOR_NAME = #recCreatorName#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="recCreateTime">
+            REC_CREATE_TIME = #recCreateTime#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="recRevisor">
+            REC_REVISOR = #recRevisor#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="recRevisorName">
+            REC_REVISOR_NAME = #recRevisorName#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="recReviseTime">
+            REC_REVISE_TIME = #recReviseTime#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="archiveFlag">
+            ARCHIVE_FLAG = #archiveFlag#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="archiveTime">
+            ARCHIVE_TIME = #archiveTime#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="archiveStampNo">
+            ARCHIVE_STAMP_NO = #archiveStampNo#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="shipLotNo">
+            SHIP_LOT_NO = #shipLotNo#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="shipName">
+            SHIP_NAME = #shipName#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="wharfName">
+            WHARF_NAME = #wharfName#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="wharfCode">
+            WHARF_CODE = #wharfCode#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="startTime">
+            START_TIME = #startTime#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="endTime">
+            END_TIME = #endTime#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="carriersName">
+            CARRIERS_NAME = #carriersName#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="shipId">
+            SHIP_ID = #shipId#
+        </isNotEmpty>
+        <isEqual prepend=" AND "  property="finishFlag" compareValue="1">
+            END_TIME=' '
+        </isEqual>
+    </sql>
+
+    <select id="query" parameterClass="java.util.HashMap"
+            resultClass="com.baosight.imc.xc.va.domain.XCVA02">
+        SELECT
+        REC_CREATOR as "recCreator",
+        REC_CREATOR_NAME as "recCreatorName",
+        REC_CREATE_TIME as "recCreateTime",
+        REC_REVISOR as "recRevisor",
+        REC_REVISOR_NAME as "recRevisorName",
+        REC_REVISE_TIME as "recReviseTime",
+        ARCHIVE_FLAG as "archiveFlag",
+        ARCHIVE_TIME as "archiveTime",
+        ARCHIVE_STAMP_NO as "archiveStampNo",
+        SHIP_LOT_NO as "shipLotNo",
+        SHIP_NAME as "shipName",
+        WHARF_NAME as "wharfName",
+        WHARF_CODE as "wharfCode",
+        START_TIME as "startTime",
+        END_TIME as "endTime",
+        CARRIERS_NAME as "carriersName",
+        SHIP_ID as "shipId"
+        FROM XC.TXCVA02 WHERE 1=1
+        <include refid="condition"/>
+        <dynamic prepend="ORDER BY">
+            <isNotEmpty property="orderBy">
+                $orderBy$
+            </isNotEmpty>
+        </dynamic>
+    </select>
+
+    <select id="count" resultClass="int">
+        SELECT COUNT(*) FROM XC.TXCVA02 WHERE 1=1
+        <include refid="condition"/>
+    </select>
+
+    <insert id="insert">
+        INSERT INTO XC.TXCVA02 (
+            REC_CREATOR,
+            REC_CREATOR_NAME,
+            REC_CREATE_TIME,
+            REC_REVISOR,
+            REC_REVISOR_NAME,
+            REC_REVISE_TIME,
+            ARCHIVE_FLAG,
+            ARCHIVE_TIME,
+            ARCHIVE_STAMP_NO,
+            SHIP_LOT_NO,
+            SHIP_NAME,
+            WHARF_NAME,
+            WHARF_CODE,
+            START_TIME,
+            END_TIME,
+            CARRIERS_NAME,
+            SHIP_ID
+            )
+        VALUES (
+            #recCreator:VARCHAR#,
+            #recCreatorName:VARCHAR#,
+            #recCreateTime:VARCHAR#,
+            #recRevisor:VARCHAR#,
+            #recRevisorName:VARCHAR#,
+            #recReviseTime:VARCHAR#,
+            #archiveFlag:VARCHAR#,
+            #archiveTime:VARCHAR#,
+            #archiveStampNo:VARCHAR#,
+            #shipLotNo:VARCHAR#,
+            #shipName:VARCHAR#,
+            #wharfName:VARCHAR#,
+            #wharfCode:VARCHAR#,
+            #startTime:VARCHAR#,
+            #endTime:VARCHAR#,
+            #carriersName:VARCHAR#,
+            #shipId:VARCHAR#
+        )
+    </insert>
+
+    <delete id="delete">
+        DELETE FROM XC.TXCVA02 WHERE 1=1
+    </delete>
+
+    <update id="update">
+        UPDATE XC.TXCVA02
+        SET
+        REC_CREATOR    = #recCreator#,
+        REC_CREATOR_NAME    = #recCreatorName#,
+        REC_CREATE_TIME    = #recCreateTime#,
+        REC_REVISOR    = #recRevisor#,
+        REC_REVISOR_NAME    = #recRevisorName#,
+        REC_REVISE_TIME    = #recReviseTime#,
+        ARCHIVE_FLAG    = #archiveFlag#,
+        ARCHIVE_TIME    = #archiveTime#,
+        ARCHIVE_STAMP_NO    = #archiveStampNo#,
+        SHIP_LOT_NO    = #shipLotNo#,
+        SHIP_NAME    = #shipName#,
+        WHARF_NAME    = #wharfName#,
+        WHARF_CODE    = #wharfCode#,
+        START_TIME    = #startTime#,
+        END_TIME    = #endTime#,
+        CARRIERS_NAME    = #carriersName#,
+        SHIP_ID    = #shipId#
+        WHERE 1=1
+    </update>
+
+    <select id="getWharfCode" resultClass="java.util.HashMap" parameterClass="java.util.HashMap">
+        SELECT DISTINCT
+	        t.WHARF_CODE AS "wharfCode",
+	        t.WHARF_NAME AS "wharfName"
+        FROM
+            XC.TXCVA02 t
+    </select>
+    <select id="queryViolationShip" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+        SELECT
+        SHIP_LOT_NO as "shipLotNo",
+        SHIP_NAME as "shipName",
+        WHARF_NAME as "wharfName",
+        WHARF_CODE as "wharfCode",
+        CARRIERS_NAME as "carriersName",
+        SHIP_ID as "shipId"
+        FROM XC.TXCVA02 WHERE 1=1
+        <isNotEmpty prepend=" AND " property="violationTime">
+            START_TIME &lt;= #violationTime# AND END_TIME=' '
+        </isNotEmpty>
+        ORDER BY REC_CREATE_TIME DESC
+    </select>
+    <update id="updateEndTime">
+        UPDATE XC.TXCVA02
+        SET
+        END_TIME    = #endTime#
+        WHERE SHIP_ID=#shipId#
+    </update>
+
+    <select id="queryHistoryVideo" resultClass="java.util.HashMap">
+        SELECT
+            T02.WHARF_NAME AS "wharfName",
+            T02.SHIP_LOT_NO AS "shipLotNo",
+            T02.SHIP_NAME AS "shipName",
+            T02.SHIP_ID AS "shipId",
+            TO_CHAR(TO_DATE(T02.START_TIME, 'YYYY-MM-DD HH24:MI:SS'), 'YYYY-MM-DD HH24:MI:SS') AS "startTime",
+            TO_CHAR(TO_DATE(T02.END_TIME, 'YYYY-MM-DD HH24:MI:SS'), 'YYYY-MM-DD HH24:MI:SS') AS "endTime",
+            TT.VIOLATION_COUNT as "violationCount",
+            TT.VIOLATION_TYPE as "violationType"
+        FROM
+	        XC.TXCVA02 T02
+        LEFT JOIN (
+            SELECT
+                count(1) VIOLATION_COUNT,
+                LISTAGG(DISTINCT (a.ITEM_CNAME),
+                '，') VIOLATION_TYPE,
+                T01.SHIP_ID
+            FROM
+                XC.TXCVA01 T01 LEFT JOIN IPLAT4J.TEDCM01 a ON a.ITEM_CODE = T01.VIOLATION_TYPE AND a.CODESET_CODE = 'imc.va.violationType'
+            WHERE 1=1
+            <isNotEmpty prepend=" AND " property="violationType">
+                T01.VIOLATION_TYPE = #violationType#
+            </isNotEmpty>
+            GROUP BY
+                T01.SHIP_ID)TT ON
+        T02.SHIP_ID = TT.SHIP_ID
+        WHERE 1=1
+        <isNotEmpty prepend=" AND " property="shipName">
+            T02.SHIP_NAME LIKE CONCAT('%',#shipName#,'%')
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="shipLotNo">
+            T02.SHIP_LOT_NO = #shipLotNo#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="wharfCode">
+            T02.WHARF_CODE = #wharfCode#
+        </isNotEmpty>
+    </select>
+</sqlMap>

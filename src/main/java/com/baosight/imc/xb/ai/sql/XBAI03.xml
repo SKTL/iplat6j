@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap  PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">    <!--      table information
+		Generate time : 2024-10-23 14:05:24
+   		Version :  1.0
+		table comment : 测试
+		schema : iplat4j
+		tableName : TXBAI03
+		 UUID  VARCHAR   NOT NULL, 
+		 REC_CREATE_TIME  VARCHAR   NOT NULL, 
+		 REC_CREATOR  VARCHAR   NOT NULL, 
+		 REC_CREATOR_NAME  VARCHAR   NOT NULL, 
+		 REC_REVISOR  VARCHAR   NOT NULL, 
+		 REC_REVISOR_NAME  VARCHAR   NOT NULL, 
+		 REC_REVISOR_TIME  VARCHAR   NOT NULL, 
+		 DEL_FLAG  SMALLINT   NOT NULL, 
+		 ARCHIVE_FLAG  VARCHAR   NOT NULL, 
+		 SEG_NO  VARCHAR   NOT NULL, 
+		 SUBSCRIBE_NAME  VARCHAR   NOT NULL, 
+		 SUBSCRIBE_REVISOR  VARCHAR   NOT NULL, 
+		 SUBSCRIBE_FREQ  VARCHAR   NOT NULL, 
+		 SUBSCRIBE_EMAIL  VARCHAR   NOT NULL, 
+		 SUBSCRIBE_MOBILE  VARCHAR   NOT NULL, 
+		 PUSH_DATE  VARCHAR   NOT NULL, 
+		 SUBSCRIBE_SEG_NO  VARCHAR   NOT NULL, 
+		 SUBSCRIBE_INFO  VARCHAR   NOT NULL, 
+		 PUSH_DAY  VARCHAR   NOT NULL, 
+		 PUSH_HOUR  VARCHAR   NOT NULL, 
+		 PUSH_MONTH  VARCHAR   NOT NULL
+	-->
+<sqlMap namespace="XBAI03">
+
+    <sql id="condition">
+        <isNotEmpty prepend=" AND " property="uuid">
+            UUID = #uuid#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="uuidNo">
+            UUID != #uuidNo#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="recCreateTime">
+            REC_CREATE_TIME = #recCreateTime#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="recCreator">
+            REC_CREATOR = #recCreator#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="recCreatorName">
+            REC_CREATOR_NAME = #recCreatorName#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="recRevisor">
+            REC_REVISOR = #recRevisor#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="recRevisorName">
+            REC_REVISOR_NAME = #recRevisorName#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="recRevisorTime">
+            REC_REVISOR_TIME = #recRevisorTime#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="delFlag">
+            DEL_FLAG = #delFlag#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="archiveFlag">
+            ARCHIVE_FLAG = #archiveFlag#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="segNo">
+            SEG_NO = #segNo#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="subscribeName">
+            SUBSCRIBE_NAME LIKE '%' || #subscribeName# || '%'
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="subscribeRevisor">
+            SUBSCRIBE_REVISOR LIKE '%' || #subscribeRevisor# || '%'
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="subscribeRevisorEqu">
+            SUBSCRIBE_REVISOR = #subscribeRevisorEqu#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="subscribeFreq">
+            SUBSCRIBE_FREQ = #subscribeFreq#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="subscribeEmail">
+            SUBSCRIBE_EMAIL = #subscribeEmail#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="subscribeMobile">
+            SUBSCRIBE_MOBILE = #subscribeMobile#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="pushDate">
+            PUSH_DATE = #pushDate#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="subscribeSegNo">
+            SUBSCRIBE_SEG_NO LIKE '%' || #subscribeSegNo# || '%'
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="subscribeInfo">
+            SUBSCRIBE_INFO LIKE '%' || #subscribeInfo# || '%'
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="subscribeInfoEqu">
+            SUBSCRIBE_INFO = #subscribeInfoEqu#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="pushDay">
+            PUSH_DAY LIKE '%' || #pushDay# || '%'
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="pushHour">
+            PUSH_HOUR LIKE '%' || #pushHour# || '%'
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="pushMonth">
+            PUSH_MONTH = #pushMonth#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="msgType">
+            MSG_TYPE = #msgType#
+        </isNotEmpty>
+    </sql>
+
+    <select id="query" parameterClass="java.util.HashMap"
+            resultClass="com.baosight.imc.xb.ai.domain.XBAI03">
+        SELECT
+        UUID as "uuid",  <!-- ID -->
+        REC_CREATE_TIME as "recCreateTime",  <!-- 记录创建时间 -->
+        REC_CREATOR as "recCreator",  <!-- 记录创建人 -->
+        REC_CREATOR_NAME as "recCreatorName",  <!-- 记录创建人姓名 -->
+        REC_REVISOR as "recRevisor",  <!-- 记录修改人 -->
+        REC_REVISOR_NAME as "recRevisorName",  <!-- 记录修改人姓名 -->
+        REC_REVISOR_TIME as "recRevisorTime",  <!-- 记录修改人时间 -->
+        DEL_FLAG as "delFlag",  <!-- 记录删除标记 -->
+        ARCHIVE_FLAG as "archiveFlag",  <!-- 归档标记 -->
+        SEG_NO as "segNo",  <!-- 系统账套 -->
+        SUBSCRIBE_NAME as "subscribeName",  <!-- 订阅人姓名 -->
+        SUBSCRIBE_REVISOR as "subscribeRevisor",  <!-- 订阅人 -->
+        SUBSCRIBE_FREQ as "subscribeFreq",  <!-- 订阅频率 -->
+        SUBSCRIBE_EMAIL as "subscribeEmail",  <!-- 订阅邮箱地址 -->
+        SUBSCRIBE_MOBILE as "subscribeMobile",  <!-- 订阅手机号 -->
+        PUSH_DATE as "pushDate",  <!-- 推送日期 -->
+        SUBSCRIBE_SEG_NO as "subscribeSegNo",  <!-- 订阅人业务单元 -->
+        (select SEG_NAME
+        from TVZBM81 t
+        where SEG_NO = SUBSCRIBE_SEG_NO
+        and t.DEL_FLAG = 0) as "subscribeSegNoTemp",
+        SUBSCRIBE_INFO as "subscribeInfo",  <!-- 订阅信息 -->
+        PUSH_DAY as "pushDay",  <!-- 推送日 -->
+        PUSH_HOUR as "pushHour",  <!-- 推送时 -->
+        MSG_TYPE as "msgType",  <!-- 发送类别 -->
+        SEND_TYPE as "sendType",  <!-- 发送类别 -->
+        PUSH_MONTH as "pushMonth" <!-- 推送月 -->
+        FROM IAI.TXBAI03 WHERE 1=1
+        <include refid="condition"/>
+        <dynamic prepend="ORDER BY">
+            <isNotEmpty property="orderBy">
+                $orderBy$
+            </isNotEmpty>
+            <isEmpty property="orderBy">
+                REC_REVISOR_TIME desc
+            </isEmpty>
+        </dynamic>
+
+    </select>
+    <select id="queryData" parameterClass="java.util.HashMap"
+            resultClass="com.baosight.imc.xb.ai.domain.XBAI03">
+        SELECT
+        UUID as "uuid",  <!-- ID -->
+        REC_CREATE_TIME as "recCreateTime",  <!-- 记录创建时间 -->
+        REC_CREATOR as "recCreator",  <!-- 记录创建人 -->
+        REC_CREATOR_NAME as "recCreatorName",  <!-- 记录创建人姓名 -->
+        REC_REVISOR as "recRevisor",  <!-- 记录修改人 -->
+        REC_REVISOR_NAME as "recRevisorName",  <!-- 记录修改人姓名 -->
+        REC_REVISOR_TIME as "recRevisorTime",  <!-- 记录修改人时间 -->
+        DEL_FLAG as "delFlag",  <!-- 记录删除标记 -->
+        ARCHIVE_FLAG as "archiveFlag",  <!-- 归档标记 -->
+        SEG_NO as "segNo",  <!-- 系统账套 -->
+        SUBSCRIBE_NAME as "subscribeName",  <!-- 订阅人姓名 -->
+        SUBSCRIBE_REVISOR as "subscribeRevisor",  <!-- 订阅人 -->
+        SUBSCRIBE_FREQ as "subscribeFreq",  <!-- 订阅频率 -->
+        SUBSCRIBE_EMAIL as "subscribeEmail",  <!-- 订阅邮箱地址 -->
+        SUBSCRIBE_MOBILE as "subscribeMobile",  <!-- 订阅手机号 -->
+        PUSH_DATE as "pushDate",  <!-- 推送日期 -->
+        SUBSCRIBE_SEG_NO as "subscribeSegNo",  <!-- 订阅人业务单元 -->
+        SUBSCRIBE_INFO as "subscribeInfo",  <!-- 订阅信息 -->
+        PUSH_DAY as "pushDay",  <!-- 推送日 -->
+        PUSH_HOUR as "pushHour",  <!-- 推送时 -->
+        MSG_TYPE as "msgType",  <!-- 发送类别 -->
+        SEND_TYPE as "sendType",  <!-- 发送类别 -->
+        PUSH_MONTH as "pushMonth" <!-- 推送月 -->
+        FROM IAI.TXBAI03 WHERE DEL_FLAG='0'
+        <isNotEmpty prepend=" AND " property="pushMonth">
+            PUSH_MONTH = #pushMonth#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="pushDay">
+            PUSH_DAY = #pushDay#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="pushDate">
+            PUSH_DATE = #pushDate#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="subscribeFreq">
+            SUBSCRIBE_FREQ = #subscribeFreq#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="pushHour">
+            REPLACE(PUSH_HOUR, ':', '') >= #pushHour#
+        </isNotEmpty>
+    </select>
+    <select id="queryUser" parameterClass="java.util.HashMap"
+            resultClass="java.util.HashMap">
+        select
+        EMP_NO "subscribeRevisor",
+        NAME "subscribeName",
+        TELE_NUM as "subscribeMobile",
+        E_MAIL as "subscribeEmail",
+        SEG_NO as "subscribeSegNo",
+        SEG_NAME as "subscribeSegNoTemp"
+        from IPLAT4J.TVZBM8102
+        where RULE_ID = 'IAI000'
+        and DEL_FLAG = '0' AND ROLE_ID='IAI000B01'
+        <isNotEmpty prepend=" AND " property="subscribeRevisor">
+            EMP_NO = #subscribeRevisor#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="subscribeName">
+            NAME = #subscribeName#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="subscribeSegNo">
+            SEG_NO = #subscribeSegNo#
+        </isNotEmpty>
+    </select>
+    <select id="queryManageUser" parameterClass="java.util.HashMap"
+            resultClass="java.util.HashMap">
+        select
+        EMP_NO "subscribeRevisor",
+        NAME "subscribeName",
+        TELE_NUM as "subscribeMobile",
+        E_MAIL as "subscribeEmail",
+        SEG_NO as "subscribeSegNo"
+        from IPLAT4J.TVZBM8102
+        where RULE_ID = 'IAI000' and ROLE_ID = 'IAI000001'
+        and DEL_FLAG = '0'
+        <isNotEmpty prepend=" AND " property="empNo">
+            EMP_NO = #empNo#
+        </isNotEmpty>
+    </select>
+
+    <select id="count" resultClass="int">
+        SELECT COUNT(*) FROM IAI.TXBAI03 WHERE 1=1
+        <include refid="condition"/>
+    </select>
+
+    <!--
+        <isNotEmpty prepend=" AND " property="uuid">
+            UUID = #uuid#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="recCreateTime">
+            REC_CREATE_TIME = #recCreateTime#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="recCreator">
+            REC_CREATOR = #recCreator#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="recCreatorName">
+            REC_CREATOR_NAME = #recCreatorName#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="recRevisor">
+            REC_REVISOR = #recRevisor#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="recRevisorName">
+            REC_REVISOR_NAME = #recRevisorName#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="recRevisorTime">
+            REC_REVISOR_TIME = #recRevisorTime#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="delFlag">
+            DEL_FLAG = #delFlag#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="archiveFlag">
+            ARCHIVE_FLAG = #archiveFlag#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="segNo">
+            SEG_NO = #segNo#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="subscribeName">
+            SUBSCRIBE_NAME = #subscribeName#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="subscribeRevisor">
+            SUBSCRIBE_REVISOR = #subscribeRevisor#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="subscribeFreq">
+            SUBSCRIBE_FREQ = #subscribeFreq#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="subscribeEmail">
+            SUBSCRIBE_EMAIL = #subscribeEmail#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="subscribeMobile">
+            SUBSCRIBE_MOBILE = #subscribeMobile#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="pushDate">
+            PUSH_DATE = #pushDate#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="subscribeSegNo">
+            SUBSCRIBE_SEG_NO = #subscribeSegNo#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="subscribeInfo">
+            SUBSCRIBE_INFO = #subscribeInfo#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="pushDay">
+            PUSH_DAY = #pushDay#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="pushHour">
+            PUSH_HOUR = #pushHour#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="pushMonth">
+            PUSH_MONTH = #pushMonth#
+        </isNotEmpty>
+    -->
+
+    <insert id="insert">
+        INSERT INTO IAI.TXBAI03 (UUID,  <!-- ID -->
+        REC_CREATE_TIME,  <!-- 记录创建时间 -->
+        REC_CREATOR,  <!-- 记录创建人 -->
+        REC_CREATOR_NAME,  <!-- 记录创建人姓名 -->
+        REC_REVISOR,  <!-- 记录修改人 -->
+        REC_REVISOR_NAME,  <!-- 记录修改人姓名 -->
+        REC_REVISOR_TIME,  <!-- 记录修改人时间 -->
+        DEL_FLAG,  <!-- 记录删除标记 -->
+        ARCHIVE_FLAG,  <!-- 归档标记 -->
+        SEG_NO,  <!-- 系统账套 -->
+        SUBSCRIBE_NAME,  <!-- 订阅人姓名 -->
+        SUBSCRIBE_REVISOR,  <!-- 订阅人 -->
+        SUBSCRIBE_FREQ,  <!-- 订阅频率 -->
+        SUBSCRIBE_EMAIL,  <!-- 订阅邮箱地址 -->
+        SUBSCRIBE_MOBILE,  <!-- 订阅手机号 -->
+        PUSH_DATE,  <!-- 推送日期 -->
+        SUBSCRIBE_SEG_NO,  <!-- 订阅人业务单元 -->
+        SUBSCRIBE_INFO,  <!-- 订阅信息 -->
+        PUSH_DAY,  <!-- 推送日 -->
+        PUSH_HOUR,  <!-- 推送时 -->
+        MSG_TYPE,  <!-- 推送时 -->
+        SEND_TYPE,  <!-- 推送时 -->
+        PUSH_MONTH  <!-- 推送月 -->
+        )
+        VALUES (#uuid:VARCHAR#, #recCreateTime:VARCHAR#, #recCreator:VARCHAR#, #recCreatorName:VARCHAR#,
+        #recRevisor:VARCHAR#, #recRevisorName:VARCHAR#, #recRevisorTime:VARCHAR#, #delFlag#, #archiveFlag:VARCHAR#,
+        #segNo:VARCHAR#, #subscribeName:VARCHAR#, #subscribeRevisor:VARCHAR#, #subscribeFreq:VARCHAR#,
+        #subscribeEmail:VARCHAR#, #subscribeMobile:VARCHAR#, #pushDate:VARCHAR#, #subscribeSegNo:VARCHAR#,
+        #subscribeInfo:VARCHAR#, #pushDay:VARCHAR#, #pushHour:VARCHAR#, #msgType:VARCHAR#,#sendType:VARCHAR#,
+        #pushMonth:VARCHAR#)
+    </insert>
+
+    <delete id="delete">
+        UPDATE IAI.TXBAI03
+        SET REC_REVISOR = #recRevisor#,   <!-- 记录修改人 -->
+        REC_REVISOR_NAME = #recRevisorName#,   <!-- 记录修改人姓名 -->
+        REC_REVISOR_TIME = #recRevisorTime#,   <!-- 记录修改人时间 -->
+        DEL_FLAG = #delFlag#   <!-- 记录删除标记 -->
+        WHERE UUID = #uuid#
+    </delete>
+
+    <update id="update">
+        UPDATE IAI.TXBAI03
+        SET
+        REC_CREATE_TIME = #recCreateTime#,   <!-- 记录创建时间 -->
+        REC_CREATOR = #recCreator#,   <!-- 记录创建人 -->
+        REC_CREATOR_NAME = #recCreatorName#,   <!-- 记录创建人姓名 -->
+        REC_REVISOR = #recRevisor#,   <!-- 记录修改人 -->
+        REC_REVISOR_NAME = #recRevisorName#,   <!-- 记录修改人姓名 -->
+        REC_REVISOR_TIME = #recRevisorTime#,   <!-- 记录修改人时间 -->
+        DEL_FLAG = #delFlag#,   <!-- 记录删除标记 -->
+        ARCHIVE_FLAG = #archiveFlag#,   <!-- 归档标记 -->
+        SEG_NO = #segNo#,   <!-- 系统账套 -->
+        SUBSCRIBE_NAME = #subscribeName#,   <!-- 订阅人姓名 -->
+        SUBSCRIBE_REVISOR = #subscribeRevisor#,   <!-- 订阅人 -->
+        SUBSCRIBE_FREQ = #subscribeFreq#,   <!-- 订阅频率 -->
+        SUBSCRIBE_EMAIL = #subscribeEmail#,   <!-- 订阅邮箱地址 -->
+        SUBSCRIBE_MOBILE = #subscribeMobile#,   <!-- 订阅手机号 -->
+        PUSH_DATE = #pushDate#,   <!-- 推送日期 -->
+        SUBSCRIBE_SEG_NO = #subscribeSegNo#,   <!-- 订阅人业务单元 -->
+        SUBSCRIBE_INFO = #subscribeInfo#,   <!-- 订阅信息 -->
+        PUSH_DAY = #pushDay#,   <!-- 推送日 -->
+        PUSH_HOUR = #pushHour#,   <!-- 推送时 -->
+        MSG_TYPE = #msgType#,   <!-- 推送时 -->
+        SEND_TYPE = #sendType#,   <!-- 推送时 -->
+        PUSH_MONTH = #pushMonth#  <!-- 推送月 -->
+        WHERE UUID = #uuid#
+    </update>
+
+</sqlMap>

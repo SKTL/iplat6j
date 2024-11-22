@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap  PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="XBVB0102">
+
+    <sql id="condition">
+        <isNotEmpty prepend=" AND " property="unitCode">
+            UNIT_CODE = #unitCode#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="unitName">
+            UNIT_NAME = #unitName#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="modelAreaName">
+            MODEL_AREA_NAME = #modelAreaName#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="modelAreaCode">
+            MODEL_AREA_CODE = #modelAreaCode#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="modelCode">
+            MODEL_CODE = #modelCode#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="modelName">
+            MODEL_NAME = #modelName#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="violationType">
+            VIOLATION_TYPE = #violationType#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="violationstartTime">
+            VIOLATION_TIME <![CDATA[>=]]> #violationstartTime#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="violationEndTime">
+            VIOLATION_TIME <![CDATA[<=]]> #violationEndTime#
+        </isNotEmpty>
+    </sql>
+
+    <select id="queryViolationInfo" parameterClass="java.util.HashMap"
+            resultClass="java.util.HashMap">
+        SELECT
+        UNIT_CODE as "unitCode",
+        UNIT_NAME as "unitName",
+        SEG_NO as "segNo",
+        MODEL_AREA_NAME as "modelAreaNme",
+        MODEL_AREA_CODE as "modelAreaCode",
+        MODEL_NAME as "modelName",
+        MODEL_CODE as "modelCode",
+        VIOLATION_NAME as "violationName",
+        VIOLATION_TYPE as "violationType",
+        VIOLATION_TIME as "violationTime",
+        PICTURE_CODE as "pictureCode",
+        VIOLATION_IMG_URL as "violationImgUrl",
+        OPINION as "opinion",
+        SUGGESTION as "suggestion",
+        REMARK as "remark",
+        UUID as "uuid",
+        REC_CREATOR as "recCreator",
+        REC_CREATOR_NAME as "recCreatorName",
+        REC_CREATE_TIME as "recCreateTime"
+        FROM XC.TXCVB02 WHERE 1=1
+        <include refid="condition"/>
+        ORDER BY recCreateTime DESC
+    </select>
+
+    <select id="count" resultClass="int">
+        SELECT COUNT(*) FROM XC.TXCVA01 WHERE 1=1
+        <include refid="condition"/>
+    </select>
+
+    <update id="updateViolationInfo">
+        UPDATE XC.TXCVB02
+        SET
+        <isNotEmpty property="opinion">
+            OPINION = #opinion#,
+        </isNotEmpty>
+        <isNotEmpty property="suggestion">
+            SUGGESTION = #suggestion#,
+        </isNotEmpty>
+        REC_REVISE_TIME = #recReviseTime#
+        WHERE UUID = #uuid# and DEL_FLAG = '0'
+    </update>
+
+    <insert id="insertViolationInfo">
+        INSERT INTO XC.TXCVB02 (
+        <isNotEmpty property="unitName">
+            UNIT_NAME,
+        </isNotEmpty>
+        <isNotEmpty property="modelAreaName">
+            MODEL_AREA_NAME ,
+        </isNotEmpty>
+        <isNotEmpty property="modelAreaCode">
+            MODEL_AREA_CODE,
+        </isNotEmpty>
+        <isNotEmpty property="modelName">
+            MODEL_NAME,
+        </isNotEmpty>
+        <isNotEmpty property="modelCode">
+            MODEL_CODE ,
+        </isNotEmpty>
+        <isNotEmpty property="violationName">
+            VIOLATION_NAME ,
+        </isNotEmpty>
+        <isNotEmpty property="violationType">
+            VIOLATION_TYPE ,
+        </isNotEmpty>
+        <isNotEmpty property="violationTime">
+            VIOLATION_TIME ,
+        </isNotEmpty>
+        <isNotEmpty property="pictureCode">
+            PICTURE_CODE,
+        </isNotEmpty>
+        <isNotEmpty property="violationImgUrl">
+            VIOLATION_IMG_URL,
+        </isNotEmpty>
+        <isNotEmpty property="opinion">
+            OPINION ,
+        </isNotEmpty>
+        <isNotEmpty property="suggestion">
+            SUGGESTION,
+        </isNotEmpty>
+        <isNotEmpty property="ip">
+            IP ,
+        </isNotEmpty>
+        <isNotEmpty property="remark">
+            REMARK ,
+        </isNotEmpty>
+        UUID,
+        UNIT_CODE,
+        SEG_NO,
+        REC_CREATE_TIME
+        ) VALUES(
+        <isNotEmpty property="unitName">
+            #unitName#,
+        </isNotEmpty>
+        <isNotEmpty property="modelAreaName">
+            #modelAreaName#,
+        </isNotEmpty>
+        <isNotEmpty property="modelAreaCode">
+            #modelAreaCode#,
+        </isNotEmpty>
+        <isNotEmpty property="modelName">
+            #modelName#,
+        </isNotEmpty>
+        <isNotEmpty property="modelCode">
+            #modelCode#,
+        </isNotEmpty>
+        <isNotEmpty property="violationName">
+            #violationName#,
+        </isNotEmpty>
+        <isNotEmpty property="violationType">
+            #violationType#,
+        </isNotEmpty>
+        <isNotEmpty property="violationTime">
+             #violationTime#,
+        </isNotEmpty>
+        <isNotEmpty property="pictureCode">
+            #pictureCode#,
+        </isNotEmpty>
+        <isNotEmpty property="violationImgUrl">
+             #violationImgUrl#,
+        </isNotEmpty>
+        <isNotEmpty property="opinion">
+            #opinion#,
+        </isNotEmpty>
+        <isNotEmpty property="suggestion">
+            #suggestion#,
+        </isNotEmpty>
+        <isNotEmpty property="ip">
+            #ip#,
+        </isNotEmpty>
+        <isNotEmpty property="remark">
+             #remark#,
+        </isNotEmpty>
+         #uuid#,
+         #segNo#,
+         #segNo#,
+         #recCreateTime#)
+    </insert>
+
+</sqlMap>

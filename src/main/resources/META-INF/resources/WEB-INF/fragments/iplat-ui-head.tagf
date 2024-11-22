@@ -1,0 +1,1042 @@
+<%--平台内置的文件不允许修改--%>
+<%@ tag language="java" pageEncoding="UTF-8" trimDirectiveWhitespaces="true" %>
+<%@ tag import="com.baosight.iplat4j.core.FrameworkInfo" %>
+<%@ tag import="com.baosight.iplat4j.core.ei.EiConstant" %>
+<%@ tag import="com.baosight.iplat4j.core.ioc.spring.PlatApplicationContext" %>
+<%@ tag import="com.baosight.iplat4j.core.security.SecurityTokenFilter" %>
+<%@ tag import="com.baosight.iplat4j.core.util.DateUtils" %>
+<%@ tag import="com.baosight.iplat4j.core.web.threadlocal.UserSession" %>
+<%@ tag import="com.baosight.iplat4j.core.resource.I18nMessages" %>
+<%@ tag import="org.apache.commons.lang.StringUtils" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="EF" tagdir="/WEB-INF/tags/EF" %>
+
+<jsp:useBean id="ei" scope="request" class="com.baosight.iplat4j.core.ei.EiInfo"/>
+<c:set var="close" value='<%=I18nMessages.getText("E_UI.head.close", "关闭窗口")%>'/>
+<c:set var="print" value='<%=I18nMessages.getText("E_UI.head.print", "打印")%>'/>
+<c:set var="check" value='<%=I18nMessages.getText("E_UI.head.check", "数据检查")%>'/>
+<c:set var="collection" value='<%=I18nMessages.getText("E_UI.head.collection", "收藏")%>'/>
+<c:set var="help" value='<%=I18nMessages.getText("E_UI.head.help", "帮助")%>'/>
+<c:set var="widget" value='<%=I18nMessages.getText("E_UI.head.widget", "获取融合数据")%>'/>
+<c:set var="comRecordQuery" value='<%=I18nMessages.getText("E_UI.head.comRecordQuery", "沟通记录查询")%>'/>
+<c:set var="communicate" value='<%=I18nMessages.getText("E_UI.head.communicate", "沟通")%>'/>
+<%
+    String ctx = request.getContextPath();
+
+    String projectName = FrameworkInfo.getProjectEname();
+    projectName = (null == projectName) ? "" : projectName.toUpperCase();
+
+    String formEname = String.valueOf(ei.get(EiConstant.EF_CUR_FORM_ENAME));
+
+    UserSession.web2Service(request);
+    String userName = UserSession.getLoginName();
+
+    String projectVersion = FrameworkInfo.getVersion(); // 应用发布的版本
+
+    request.setAttribute("IPLAT_PROJECT_ENAME", projectName);
+    request.setAttribute("IPLAT_FORM_ENAME", formEname);
+    request.setAttribute("IPLAT_USER_ID", userName);
+
+    // APM的地址 在EDCC03中配置 http://10.70.66.82:9080/iPlatAPM/web/XPDY03?traceId=11111
+    String IPLAT_APM_URL = PlatApplicationContext.getProperty("IPLAT_APM_URL");
+    String IPLAT_APM_ANALYSIS = PlatApplicationContext.getProperty("IPLAT_APM_ANALYSIS");
+    IPLAT_APM_ANALYSIS = IPLAT_APM_ANALYSIS.isEmpty() ? "BAAP40" : IPLAT_APM_ANALYSIS;
+    String IPLAT_ES_URL = PlatApplicationContext.getProperty("esHost");
+    String IPLAT_EXPORT_SETTINGS = StringUtils.defaultIfEmpty(PlatApplicationContext.getProperty("iplat4j.ui.exportSettings"), "1");
+    String IPLAT4J_UI_GRID_TEXTAREA_EIDTOR = StringUtils.defaultIfEmpty(PlatApplicationContext.getProperty("iplat4j.ui.isGridEidtor"), "false");
+    request.setAttribute("IPLAT_APM_URL", IPLAT_APM_URL);
+    request.setAttribute("IPLAT_APM_ANALYSIS", IPLAT_APM_ANALYSIS);
+    request.setAttribute("IPLAT_ES_URL", IPLAT_ES_URL);
+    request.setAttribute("IPLAT_EXPORT_SETTINGS", IPLAT_EXPORT_SETTINGS);
+    request.setAttribute("IPLAT4J_UI_GRID_TEXTAREA_EIDTOR", IPLAT4J_UI_GRID_TEXTAREA_EIDTOR);
+
+    String jspSrc = request.getServletPath(); // *.jsp
+    String jsSrc = ctx + jspSrc.substring(0, jspSrc.length() - 1); // *.js
+    String version = DateUtils.curDateStr8();
+//    String jsSrc = ctx + jspSrc.substring(0, jspSrc.length() - 4) + new Date().getTime() + jspSrc.substring(jspSrc.length() - 4, jspSrc.length() - 1);
+
+
+    int status = ei.getStatus();
+
+    String efSecurityToken = null;
+    if (PlatApplicationContext.containsBean("securityTokenFilter")) {
+        SecurityTokenFilter securityTokenFilter = (SecurityTokenFilter) PlatApplicationContext.getBean("securityTokenFilter");
+        efSecurityToken = securityTokenFilter.getSecurityToken(request);
+    }
+
+    String sessionId = request.getRequestedSessionId();
+    if (null == sessionId) {
+        sessionId = "";
+    }
+    //获取建议反馈开关
+    String beblSuggest = PlatApplicationContext.getProperty("iplat.core.suggest");
+    //获取建议链接
+    String suggestLink = PlatApplicationContext.getProperty("iplat.core.suggestLink");
+    // 获取当前sessionId保存到隐藏域中，用于session恢复
+    String cookieStr = request.getSession(false).getId();
+
+    String wordpressUrl = PlatApplicationContext.getProperty("wdpAddress");
+    request.setAttribute("wordpressUrl", wordpressUrl);
+
+    String inFlag = request.getHeader("__in__");
+    String publicModel = PlatApplicationContext.getProperty("iplat.core.invoke.public.resource");
+%>
+
+<script>
+    window.widgetBasicVersion = "2.1.2"
+</script>
+<script src="${ctx}/wj-com/init.js"></script>
+
+<div id='ef_form_head' class='i-page-header clearfix' style="display: flex;align-items: center">
+    <div class="i-text pull-left">
+        <i class="i-icon iconfont iconlocation-fill"></i>
+        <span>${title}</span>
+        <i class="i-icon i-1 i-lg-e"></i>
+        <%if ("1".equals(inFlag) && "on".equals(publicModel)) {%>
+        <span><%=efFormEname%> 【公共资源】</span>
+        <%} else {%>
+        <span><%=efFormEname%></span>
+        <%
+            }
+        %>
+    </div>
+    <div style="flex: 3">
+        <div id="gundong" onclick="openBox()">
+            <span id="a"></span>
+        </div>
+    </div>
+    <%--    <div style="flex: 1;z-index: 999" class="widget-toolbar" role="navigation">--%>
+    <style>
+        #gundong {
+            width: calc(100vw - 500px);
+            /*width: calc(100vw - 450px);*/
+            position: absolute;
+            top: 5px;
+            z-index: 999;
+            /*width: 80px;*/
+            flex: 1;
+            /*margin: 0px 100px 0px 20px;*/
+            /*margin: 0 auto;*/
+            /* background: #dd127b; */
+            /*background-color: rgba(69, 91, 99, 0.28);*/
+            height: 28px;
+            line-height: 28px;
+            overflow: hidden;
+            font-size: 14px;
+            color: #fff;
+            font-weight: bold;
+            text-align: right;
+            margin-left: 40px;
+        }
+
+        #a {
+            position: relative;
+            white-space: nowrap;
+        }
+    </style>
+
+    <script src="${ctx}/common/js/base64-encry.js"></script>
+    <script>
+        var openFlag;
+        var int;
+        var flag;
+        var getmessage;
+        var timer;
+        var box = document.getElementById("gundong");
+        box.hidden = true	//隐藏
+        function queryUser() {
+            var inInfo1 = new EiInfo();
+            var a1 = localStorage.getItem("appuserId");
+            if (a1 == null) {
+                a1 = " ";
+            }
+            inInfo1.set("userId", window.$$.base64decode(a1));
+            EiCommunicator.send("VZBM91031", "queryUser", inInfo1, {
+                onSuccess: function (response) {
+                    openFlag = response.get("flag");
+                    if (response.getStatus() === 1) {
+                        if (response.get("flag")) {
+                            getmessage = self.setInterval("getNotification()", 15000);
+                        }
+                    } else {
+                    }
+                },
+                onFail: function (eiInfo) {
+                }
+            }, {async: false});
+        }
+
+        function clock() {
+            var flashing = localStorage.getItem("flashing");
+            if (flashing == "1") {
+                if (flag == 0) {
+                    $("#notification").css("font-size", "23px")
+                    $("#notification").css("color", "#ce3c39")
+                }
+                if (flag == 1) {
+                    $("#notification").css("font-size", "18px")
+                    $("#notification").css("color", "#ce3c39")
+                }
+                if (flag == 1) {
+                    flag = 0
+                } else if (flag == 0) {
+                    flag = 1
+
+                }
+                $("#_efFormMenu_communicate").css("color", "#ce3c39")
+                $("#_efFormMenu_communicate2").css("color", "#ce3c39")
+            } else {
+                closeTimeOut()
+                getmessage = self.setInterval("getNotification()", 15000);
+            }
+        }
+
+        function closeTimeOut() {
+            var box = document.getElementById("gundong");
+            box.hidden = true	//隐藏
+            clearInterval(timer);
+            window.clearInterval(int)
+            localStorage.removeItem("flashing");
+            $("#notification").css("font-size", "18px")
+            $("#notification").css("color", "#f5fbff")
+        }
+
+        //滚动字幕点击事件
+        function openBox() {
+            closeTimeOut()
+            var box = document.getElementById("gundong");
+            clearInterval(timer);
+            box.hidden = true	//隐藏
+            var setBtn = document.getElementById("setbtn")
+            // setBtn.hidden = false
+            communicate();
+        }
+
+        function getNotification() {
+            var inInfo = new EiInfo();
+            var a = localStorage.getItem("appuserId");
+            if (a == null) {
+                a = " ";
+            }
+            clearInterval(timer);
+            inInfo.set("userId", window.$$.base64decode(a));
+            inInfo.set("offset", 0);
+            inInfo.set("limit", 2);
+            EiCommunicator.send("VZBM91031", "queryByMessageLabelFlag", inInfo, {
+                onSuccess: function (response) {
+                    if (response.getStatus() === 1) {
+                        if (response.get("flag") == true
+                        ) {
+                            int = self.setInterval("clock()", 600);
+                            flag = 0
+                            window.clearInterval(getmessage)
+                            localStorage.setItem("flashing", "1");
+                            var setBtn = document.getElementById("setbtn")
+                            // setBtn.hidden = true
+
+                            //滚动弹幕功能
+                            var box = document.getElementById("gundong");
+                            box.hidden = false	//显示
+                            var gundong = document.getElementById("a");
+                            var fWidth = document.getElementById("gundong").offsetWidth;
+                            var cWidth = document.getElementById("a").offsetWidth
+                            // document.getElementById("a").innerHTML
+                            gundong.innerHTML = "发送人：" + response.get("sendUser") + "、时间：" + response.get("time") + "、内容：" + response.get("content")
+                            gundong.style.right = fWidth > cWidth ? '-' + cWidth + 'px' : '-' + fWidth + 'px'
+                            var step = 1;
+                            var right = fWidth > cWidth ? parseFloat('-' + cWidth) : parseFloat('-' + fWidth);
+                            timer = setInterval(function () {
+                                right += step;
+                                if (fWidth > cWidth) {
+                                    if (right >= fWidth) {
+                                        gundong.style.right = fWidth > cWidth ? '-' + cWidth + 'px' : '-' + fWidth + 'px'
+                                        right = fWidth > cWidth ? parseFloat('-' + cWidth) : parseFloat('-' + fWidth);
+                                        // box.style.display = 'none'
+                                        box.hidden = true	//隐藏
+                                        // setBtn.hidden = false
+                                        clearInterval(timer);
+                                        // box.hidden = false	//显示
+                                    }
+                                } else {
+                                    if (right >= cWidth) {
+                                        gundong.style.right = fWidth > cWidth ? '-' + cWidth + 'px' : '-' + fWidth + 'px'
+                                        right = fWidth > cWidth ? parseFloat('-' + cWidth) : parseFloat('-' + fWidth);
+                                    }
+                                }
+                                gundong.style.right = right + 'px'
+                            }, 10)
+                            return;
+                        }
+                    } else {
+                    }
+                },
+                onFail: function (eiInfo) {
+                }
+            }, {async: false});
+        }
+        function heartbeat() {
+            var inInfo = new EiInfo();
+            EiCommunicator.send("VZBM91031", "sendHeartbeat", inInfo, {
+                onSuccess: function (response) {
+                },
+                onFail: function (eiInfo) {
+                }
+            }, {async: false});
+        }
+        function loginUserOnRefresh() {
+            var a3 = localStorage.getItem("appuserId");
+            if (a3 == null) {
+                a3 = " ";
+            }
+            var userId = window.$$.base64decode(a3)
+            var inInfo = new EiInfo();
+            inInfo.set("saleId", userId);
+            inInfo.set("status", "1");
+            EiCommunicator.send("VZBM91031", "loginUserOnRefresh", inInfo, {
+                onSuccess: function (e) {
+
+                }, onFail: function (e) {
+                }
+            });
+        }
+        $(function () {
+            queryUser();
+            self.setInterval("heartbeat()", 30000);
+            loginUserOnRefresh();
+        });
+
+    </script>
+    <%-- 配置按钮图标 --%>
+    <div class="widget-toolbar" role="navigation">
+
+        <!-- 页面不存在 或禁止使用-->
+        <% if ("on".equals(beblSuggest)) {%>
+        <img id="sug" data-toggle="tooltip" data-placement="bottom" data-original-title="建议反馈" width="16px"
+             height="15px" style="position: absolute;right: 60px; top: 9px; cursor:pointer"
+             src=" ${ctx}/iplatui/img/sug.png" onclick="openSug()">
+        <%
+            }
+        %>
+        <div class="widget-menu pull-right" style="position: relative;display: flex;align-items: center">
+            <%--            <div id="gundong" onclick="openBox()">--%>
+            <%--                <span id="a"></span>--%>
+            <%--            </div>--%>
+            <a id="setbtn" data-toggle="dropdown" href="#" data-action="settings">
+
+                <i
+                        class="i-icon iconfont iconsetting_ic_material_product_icon_px" id="notification"
+                        style="font-size: 18px" onclick="closeTimeOut()"></i></a>
+            <ul class="dropdown-menu dropdown-menu-right dropdown-light-blue dropdown-caret dropdown-closer">
+                <span class="dropdown-triangle"></span>
+                <li><a id='_efFormMenu_close' href="javascript:closeWin();"><i
+                        class="iconfont iconclose"></i>&nbsp;${close}</a>
+                </li>
+
+                <li class="divider"></li>
+
+                <li><a id='_efFormMenu_print' href="javascript:window.print();"><i class="iconfont iconprint-fill"></i>&nbsp;${print}
+                </a>
+                </li>
+
+                <li class="divider"></li>
+
+                <%--<li><a id='_efFormMenu_diagnostics'--%>
+                <%--href="#">--%>
+                <%--<i class="fa fa-stethoscope"></i>&nbsp;页面诊断工具</a></li>--%>
+                <li>
+                    <a id='_efFormMenu_viewEiInfo'
+                       href="javascript:checkPage();">
+                        <i class="iconfont iconinformation-fill"></i>&nbsp;${check}</a></li>
+
+                <li class="divider"></li>
+
+                <%if ("1".equals(inFlag) && "on".equals(publicModel)) {%>
+                <li><a id='_efFormMenu_favorites' href="javascript:attention();"><i
+                        class="iconfont iconcollect"></i>&nbsp;${collection}</a></li>
+                <%} else {%>
+                <li><a id='_efFormMenu_favorites' href="javascript:favorites();"><i
+                        class="iconfont iconcollect"></i>&nbsp;${collection}</a></li>
+                <%
+                    }
+                %>
+
+                <li><a id='_efFormMenu_help' href="javascript:help();"><i
+                        class="iconfont iconhelp"></i>&nbsp;${help}</a></li>
+
+                <li><a id='_efFormMenu_communicate' href="javascript:communicate();"><i
+                        class="k-icon fa fa-comments i-btn-only-icon "></i>&nbsp;${communicate}(app)</a></li>
+
+                <li><a id='_efFormMenu_communicate2' href="javascript:communicate2();"><i
+                        class="k-icon fa fa-comments i-btn-only-icon "></i>&nbsp;${comRecordQuery}</a></li>
+
+
+                <%--                <li class="divider"></li>--%>
+                <li class="divider"></li>
+                <%--                <li><a id='_efFormMenu_widget' href="javascript:widgetInit();"><i--%>
+                <%--                        class="iconfont"></i>&nbsp;${widget}</a></li>--%>
+                <%if ("1".equals(inFlag) && "on".equals(publicModel)) {%>
+                <li class="qrcode">
+                    <div id="iplat-page-card1"></div>
+                </li>
+                <%} else {%>
+                <li class="qrcode">
+                    <div id="iplat-page-card"></div>
+                </li>
+                <%
+                    }
+                %>
+
+                <%--<script type="text/javascript">--%>
+                <%--attentionTips();--%>
+                <%--</script>--%>
+            </ul>
+        </div>
+    </div>
+
+    <%--
+        <div class="widget-toolbar" role="navigation">
+            <div class="widget-menu pull-right" style="position: relative">
+                <a data-toggle="dropdown" href="#" data-action="settings"><i class="i-icon i-lg-setting"></i></a>
+                <ul class="dropdown-menu dropdown-menu-right dropdown-light-blue dropdown-caret dropdown-closer">
+                    <span class="dropdown-triangle"></span>
+                    <li><a id='_efFormMenu_close' href="javascript:window.close();"><i
+                            class="fa fa-times"></i>&nbsp;关闭窗口</a>
+                    </li>
+
+                    <li class="divider"></li>
+
+                    <li><a id='_efFormMenu_print' href="javascript:window.print();"><i class="fa fa-print"></i>&nbsp;打印</a>
+                    </li>
+
+                    <li class="divider"></li>
+
+                    &lt;%&ndash;<li><a id='_efFormMenu_diagnostics'&ndash;%&gt;
+                    &lt;%&ndash;href="#">&ndash;%&gt;
+                    &lt;%&ndash;<i class="fa fa-stethoscope"></i>&nbsp;页面诊断工具</a></li>&ndash;%&gt;
+                    <li>
+                        <a id='_efFormMenu_viewEiInfo'
+                           href="javascript:checkPage();">
+                            <i class="fa fa-info"></i>&nbsp;数据检查</a></li>
+
+                    <li class="divider"></li>
+
+                    <li><a id='_efFormMenu_favorites' href="javascript:favorites();"><i
+                            class="fa fa-bookmark"></i>&nbsp;收藏</a></li>
+
+                    <li><a id='_efFormMenu_help' href="javascript:help();"><i
+                            class="fa fa-question-circle"></i>&nbsp;帮助</a></li>
+
+                    <li class="divider"></li>
+
+                    <li class="qrcode">
+                        <div id="iplat-page-card"></div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    --%>
+
+</div>
+<EF:EFWindow modal="false" id="windowAppOpen" url="" height="620" width="375" top="13%" left="70%"/>
+
+<%-- 页面公用变量 --%>
+<div id="efFormCommonValue" style='display: none'>
+    <EF:EFInput ename="efFormEname" inline="true" type="hidden"/>
+    <EF:EFInput ename="efFormCname" inline="true" type="hidden"/>
+    <EF:EFInput ename="efFormPopup" inline="true" type="hidden"/>
+    <EF:EFInput ename="efFormTime" inline="true" type="hidden"/>
+    <EF:EFInput ename="efCurFormEname" inline="true" type="hidden"/>
+    <EF:EFInput ename="efCurButtonEname" inline="true" type="hidden"/>
+    <EF:EFInput ename="packageName" inline="true" type="hidden"/>
+    <EF:EFInput ename="serviceName" inline="true" type="hidden"/>
+    <EF:EFInput ename="methodName" inline="true" type="hidden"/>
+    <EF:EFInput ename="efFormInfoTag" inline="true" type="hidden"/>
+    <EF:EFInput ename="efFormLoadPath" inline="true" type="hidden"/>
+    <EF:EFInput ename="efFormButtonDesc" inline="true" type="hidden"/>
+    <EF:EFInput ename="__$$DIAGNOSE$$__" inline="true" type="hidden"/>
+    <input type="hidden" id="efSecurityToken" name="efSecurityToken" value="<%=efSecurityToken%>"
+           class="inputField"/>
+    <input type="hidden" id="COOKIE" name="COOKIE" value="<%=cookieStr%>"/>
+</div>
+
+<script>
+    // Java 服务端传递到 JavaScript中的配置项
+    IPLATUI.releaseVersion = "<%=projectVersion%>";
+    IPLATUI.CONTEXT_PATH = "${ctx}";
+
+    IPLATUI.PROJECT_ENAME = "<%=projectName%>";
+    IPLATUI.FORM_ENAME = "<%=formEname%>";
+    IPLATUI.USER_ID = "<%=userName%>";
+    IPLATUI.Config.EFGrid.textareaIsEdit = "<%=IPLAT4J_UI_GRID_TEXTAREA_EIDTOR%>"
+    IPLATUI.APM_URL = "<%=IPLAT_APM_URL%>";
+    IPLATUI.APM_ANALYSIS = "<%=IPLAT_APM_ANALYSIS%>";
+    IPLATUI.ES_URL = "<%=IPLAT_ES_URL%>";
+    IPLATUI.Config.EFGrid.exportSettings = "<%=IPLAT_EXPORT_SETTINGS%>";
+</script>
+
+<%@include file="/WEB-INF/fragments/kendo-ui-js.tagf" %>
+
+<c:if test="${__hasTopDomain__}">
+    <script type="text/javascript">
+        try {
+            // 顶级domain cookie中的信息共享
+            document.domain = '${__topDomain__}';
+            IPLATUI.TOP_DOMAIN = '${__topDomain__}';
+        } catch (ex) {
+            NotificationUtil('无法更改document.domain [${__topDomain__}]', "error");
+        }
+    </script>
+</c:if>
+
+<%-- iplat.ui.head.js --%>
+<script type="text/javascript">
+
+    var __ei =  <%=ei.toJSONString()%>;
+    var __eiInfo = EiInfo.parseJSONObject(__ei);
+    __eiInfo.__version__ = IPLATUI.Config.EiInfo.version;
+    //原来在转换的过程中已经处理了traceId
+    //__eiInfo.traceId = __ei.traceId;
+
+    IPLAT.ajaxEi = __eiInfo; // 页面initLoad的EiInfo
+
+    function _getEi() {
+        return __eiInfo;
+    }
+
+    if (IPLAT.Util.inIframe()) { // iframe 的标题的去除
+        var $head = $("#ef_form_head");
+        var formCname = $head.find("span")[0].innerHTML,
+            formEname = $head.find("span")[1].innerHTML;
+
+        IPLATUI.Config.Notification.LEVEL = "ERROR";
+
+        $("form").removeClass("i-form");
+
+        IPLAT.Util.handleFrameTitle(window, formCname, formEname);
+
+        // iframe 加载结束
+        $(window).on("load", function () {
+
+            // TODO iframe内EFRegion的header是否隐藏
+//            $(".i-region-header").remove();
+
+            var callback = window.parent.IPLAT && window.parent.IPLAT.iframeLoad;
+            var efWindowCallback = window.parent.IPLAT && window.parent.efWindowIframeLoad;
+
+            var eventData = {
+                "iframe": window,
+                "type": "IPLAT",
+                data: {
+                    formCname: formCname,
+                    formEname: formEname
+                }
+            };
+
+            window.parent.$("iframe").closest(".k-content").css({
+                "overflow": "visible", // 去除内侧容器的滚动条
+                "padding": "0", // 消除弹出的iframe内k-content自带的padding
+                "background-color": "#F7FAFF" // 背景色一致
+            });
+            window.parent.$("iframe").closest(".row").css('margin', 0);
+
+            if (typeof callback === "function") {
+                callback(eventData);
+            }
+
+            if (typeof efWindowCallback === "function") {
+                efWindowCallback(eventData);
+            }
+        });
+    }
+
+    /**
+     * 等dom文档树加载完毕之后，调用接口判断当前页面是否被当前用户关注【收藏】
+     * 1、若以被关注，收藏标识的初始显示值为【取消收藏】
+     * 2、若未被关注，收藏标识的初始显示值为【收藏】
+     */
+    $(document).ready(function () {
+        var inFlag = "<%=inFlag%>";
+        var publicModel = "<%=publicModel%>";
+        var efFormEname = "<%=efFormEname%>";
+        var eiInfo = new EiInfo();
+        if (inFlag == "1" && publicModel == "on") {
+            eiInfo.set("resEname", efFormEname);
+            EiCommunicator.send("EDFA10", "attentionTips", eiInfo, {
+                onSuccess: function (e) {
+                    //已经被收藏
+                    if (e["status"] == "1") {
+                        $("#_efFormMenu_favorites").html("<i class='iconfont iconcollect'></i>&nbsp;取消收藏");
+                    } else if (e["status"] == "-1") {
+                        //查询失败
+                        NotificationUtil(e, "error");
+                    }
+                },
+                onFail: function (e) {
+
+                }
+            });
+        }
+    });
+
+    $(function () {
+
+        var msg = {
+            msgKey: "<%=efFormEname%>",
+            msg: __eiInfo.getMsg(),
+            state: __eiInfo.get("state")
+        };
+
+        if (IPLATUI.Config.Notification.SHOW_INITLOAD_MSG) {
+            if (0 <= <%=status%>) {
+                NotificationUtil(msg);
+            } else {
+                NotificationUtil(msg, "error");
+            }
+        }
+
+        var buttonDescInfo, efFormButtonDesc = __eiInfo.get("efFormButtonDesc");
+
+        if (IPLAT.isString(efFormButtonDesc)) {
+            buttonDescInfo = EiInfo.parseJSONString(efFormButtonDesc);
+        } else if ($.isPlainObject(efFormButtonDesc)) {
+            buttonDescInfo = EiInfo.parseJSONObject(efFormButtonDesc);
+        }
+
+        var divBlocks = _.filter(buttonDescInfo.getBlocks(), function (block) {
+            return block.getBlockId().match(/^DIV:/);
+        });
+
+        var ICON = IPLATUI.Config.Layout.ICON,
+            ICON_AND_TEXT = IPLATUI.Config.Layout.ICON_AND_TEXT;
+
+        _.each(divBlocks, function (block) {
+            var $div = $("#" + block.getBlockId().toLowerCase().substring(4)),
+                rows = block.getMappedRows().sort(function (a, b) {
+                    return a.position - b.position
+                });
+
+            _.each(rows, function (row) {
+                // 按钮权限控制
+                if (row["button_status"] === "1") {
+                    var btnClass = IPLAT.Util.parseBtnClass(row['uri']),
+                        iconCss = btnClass.css,  // css:
+                        btnCss = btnClass.btnClass,  // btnClass:
+                        iconSpan = "",
+                        textSpan = "<span>" + (row['button_cname'] || "") + "</span>";
+
+                    if (row['layout'] === ICON) {
+                        iconSpan = "<span class='i-btn-only-icon " + iconCss + "'></span>";
+                        textSpan = "";
+                    } else if (row['layout'] === ICON_AND_TEXT) {
+                        iconSpan = "<span class='" + iconCss + "'></span>";
+                    }
+
+                    var buttonStr = "<button id='" + row["button_ename"] + "' type='button' " +
+                        "class='i-btn-lg " + btnCss + "' " + "title='" + row['button_desc'] +
+                        "' layout='" + row['layout'] + "'>" + iconSpan + textSpan + "</button>";
+                    $div.append(buttonStr);
+                }
+            });
+
+        });
+    });
+
+    // 收藏页面
+    function favorites() {
+        var callback = {
+            onSuccess: function (eiInfo) {
+                if (eiInfo["status"] == -1) {
+                    NotificationUtil(eiInfo, "error");
+                } else {
+                    NotificationUtil({
+                        msg: '收藏成功'
+                    });
+                }
+            },
+            onFail: function (eMsg) {
+                NotificationUtil({
+                    msg: '收藏失败'
+                }, "error");
+            }
+        };
+
+        var efFormEname = $("#efFormEname").val();
+        var efFormCname = $("#efFormCname").val();
+        // var projectName = $("#document").context.title.split("/")[0];
+        var projectName = "<%=projectName%>";
+        var eiinfo = new EiInfo();
+        eiinfo.set("efFormEname", efFormEname);
+        eiinfo.set("efFormCname", efFormCname);
+        eiinfo.set("projectName", projectName.toLowerCase());
+
+        EiCommunicator.send("EDFA10", "insert", eiinfo, callback);
+
+    }
+
+    //判断是否为微信内置浏览器
+    function isWeiXin() {
+        var ua = window.navigator.userAgent.toLowerCase();
+        if (ua.match(/MicroMessenger/i) == 'micromessenger') {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    //关闭窗口
+    function closeWin() {
+        if (isWeiXin()) {
+            WeixinJSBridge.call('closeWindow');
+        } else {
+            window.close();
+        }
+    }
+
+    //走信息资源的收藏【关注】
+    function attention() {
+        var $ef = $("#_efFormMenu_favorites")[0];
+        var innerOne = "<i class=\"iconfont iconcollect\"></i>&nbsp;收藏";
+        var innerTwo = "<i class=\"iconfont iconcollect\"></i>&nbsp;取消收藏";
+        var callback = {
+            onSuccess: function (eiInfo) {
+                if (eiInfo["status"] == -1) {
+                    NotificationUtil(eiInfo, "error");
+                } else if (eiInfo["status"] == 1) {
+                    $ef.innerHTML = innerTwo;
+                    NotificationUtil({
+                        msg: '已收藏'
+                    });
+                } else if (eiInfo["status"] == 0) {
+                    $ef.innerHTML = innerOne;
+                    NotificationUtil({
+                        msg: '取消收藏'
+                    });
+                }
+            },
+            onFail: function (eMsg) {
+                NotificationUtil({
+                    msg: '收藏失败'
+                }, "error");
+            }
+        };
+
+        var resEname = $("#efFormEname").val();
+        var efFormCname = $("#efFormCname").val();
+        var projectName = $("#document").context.title.split("/")[0];
+        var eiinfo = new EiInfo();
+        eiinfo.set("efFormEname", resEname);
+        eiinfo.set("efFormCname", efFormCname);
+        eiinfo.set("projectName", projectName);
+
+        var eiinfo = new EiInfo();
+        eiinfo.set("resEname", resEname);
+
+        EiCommunicator.send("EDFA10", "textAttention", eiinfo, callback);
+    }
+
+    // EiInfo数据检查
+    function checkPage() {
+        IPLAT.openNewForm('EU0002');
+    }
+
+    IPLATUI.EFWindow = {
+        "windowAppOpen": {
+            close: function (e) {
+                window.clearInterval(getmessage)
+                localStorage.setItem("openFlag", false);
+                getmessage = self.setInterval("getNotification()", 15000);
+            }
+        },
+    }
+
+    function communicate() {
+        if (!openFlag) {
+            NotificationUtil("非营销体系员工，不可使用该功能！", "error");
+            return;
+        }
+        $("#_efFormMenu_communicate").css("color", "")
+        $("#_efFormMenu_communicate2").css("color", "")
+        localStorage.setItem("openFlag", true);
+        var url = IPLATUI.CONTEXT_PATH.substr(0, IPLATUI.CONTEXT_PATH.indexOf("/")) + "/web/VZBM9105";
+        var popWindow = $("#windowAppOpen");
+        // console.log(__ei.efFormEname)
+        if (__ei.efFormEname == "VZBM58") {
+            var user = [{"receiveId": "045477", "receiveName": "杨仪"}, {"receiveId": "D88508", "receiveName": "何俊"}];
+            var content = {"messageContent": "测试内容", "messageLabel": "测试标签"}
+            localStorage.setItem("content", JSON.stringify(content));
+            localStorage.setItem("sendUser", JSON.stringify(user));
+        } else {
+            localStorage.removeItem("sendUser");
+            localStorage.removeItem("content");
+        }
+        popWindow.data("kendoWindow").setOptions({
+            open: function () {
+                popWindow.data("kendoWindow").refresh({
+                    url: url
+                });
+            },
+            iframe: true
+        });
+        popWindow.data("kendoWindow").content("");
+        popWindow.data("kendoWindow").open();
+        // IPLAT.openNewForm('VZBM91');
+    }
+
+    function communicate2() {
+        $("#_efFormMenu_communicate").css("color", "")
+        $("#_efFormMenu_communicate2").css("color", "")
+        window.open(IPLATUI.CONTEXT_PATH.substr(0, IPLATUI.CONTEXT_PATH.indexOf("/")) + "/web/VZBM91");
+    }
+
+    // wordpress帮助
+    function help() {
+        var wordpressUrl = "<%=wordpressUrl%>";
+        var efFormEname = $("#efFormEname").val();
+        var helpUrl = wordpressUrl + "/" + efFormEname.toLowerCase();
+        $("#help-window").kendoWindow({
+            actions: ["Close"],
+            width: "90%",
+            height: "90%",
+            content: helpUrl,
+            position: {
+                top: "5%",
+                left: "5%"
+            }
+        });
+        var helpWindow = $("#help-window").data("kendoWindow");
+        helpWindow.open();
+        helpWindow.title("帮助");
+    }
+
+    <%--function widgetLoader() {--%>
+    <%--    const init = async (obj) => {--%>
+    <%--        window.widget = obj;--%>
+    <%--        let ctx = window._ctx--%>
+    <%--        if (!window.customElements.get("wj-widget-area")) {--%>
+    <%--            let basicUrl = await queryBasic();--%>
+    <%--            console.log(basicUrl,"basic")--%>
+    <%--            &lt;%&ndash;const basicUrl = `${ctx}/wj-com/wj-basic-2.0.0.min.js`&ndash;%&gt;--%>
+    <%--            await loadScript(basicUrl)--%>
+    <%--        }--%>
+    <%--        const area = document.createElement("wj-widget-area");--%>
+    <%--        document.body.appendChild(area);--%>
+    <%--        console.log('init over')--%>
+    <%--    }--%>
+
+    <%--     const  loadScript = (src) => {--%>
+    <%--        return new Promise((resolve, reject) => {--%>
+    <%--            const script = document.createElement('script');--%>
+    <%--            script.type = 'text/javascript';--%>
+    <%--            script.onload = resolve;--%>
+    <%--            script.onerror = reject;--%>
+    <%--            script.crossOrigin = 'anonymous';--%>
+    <%--            script.src = src;--%>
+    <%--            if (document.head.append) {--%>
+    <%--                document.head.append(script);--%>
+    <%--            } else {--%>
+    <%--                document.getElementsByTagName('head')[0].appendChild(script);--%>
+    <%--            }--%>
+    <%--        });--%>
+    <%--    };--%>
+
+    <%--    const loadByKey = (key) => {--%>
+    <%--        // 判断对应变量在 window 是否存在，如果存在说明已加载，直接返回，这样可以避免多次重复加载--%>
+    <%--        if (window[key]) {--%>
+    <%--            return Promise.resolve();--%>
+    <%--        } else {--%>
+    <%--            if (Array.isArray(jsUrls[key])) {--%>
+    <%--                return Promise.all(jsUrls[key].map(loadScript));--%>
+    <%--            }--%>
+    <%--            return loadScript(jsUrls[key]);--%>
+    <%--        }--%>
+    <%--    };--%>
+    <%--    // 查询微件注册共享服务，获取basic包的url地址--%>
+    <%--    async function queryBasic() {--%>
+    <%--        let inInfo = new EiInfo();--%>
+    <%--        let basicUrl = "";--%>
+    <%--        let resurl = "";--%>
+    <%--        inInfo.set("url", "http://eplattest.baocloud.cn/base-service/service/S_BE_VD_0001");--%>
+    <%--        inInfo.set("token","");--%>
+    <%--        inInfo.set("inqu_status-0-ename", "basic");--%>
+    <%--        await EiCommunicator.send(window.widget.widgetService,"urlQuery", inInfo, {--%>
+    <%--            // 服务调用成功后的回调函数 onSuccess--%>
+    <%--            onSuccess: function (response) {--%>
+    <%--                if (response.getStatus() >= 0) {--%>
+    <%--                    let block = response.getBlock("result");--%>
+    <%--                    resurl = block.getCell(0, "widgetUrl");--%>
+    <%--                }--%>
+    <%--            },--%>
+    <%--            // 服务调用失败后的回调函数 onFail--%>
+    <%--            onFail: function(errorMsg, status, e) { /* errorMsg 是平台格式化后的异常消息， status， e的含义和$.ajax的含义相同，请参考jQuery文档 */--%>
+    <%--                // 调用发生异常--%>
+    <%--                console.log(errorMsg);--%>
+    <%--            }--%>
+    <%--        })--%>
+    <%--        await $.ajax({--%>
+    <%--            url: resurl,--%>
+    <%--            type: "GET",--%>
+    <%--            success: function (res) {--%>
+    <%--                text = res;--%>
+    <%--                const blob = new Blob([text]);--%>
+    <%--                basicUrl = window.URL.createObjectURL(blob);--%>
+    <%--            },--%>
+    <%--            error: function (err) {--%>
+    <%--                console.log(err)--%>
+    <%--            }--%>
+    <%--        })--%>
+    <%--        return basicUrl;--%>
+    <%--    }--%>
+    <%--    window.AsyncLoader = {--%>
+    <%--        init,--%>
+    <%--        loadScript,--%>
+    <%--        loadByKey,--%>
+    <%--        queryBasic--%>
+    <%--    };--%>
+    <%--}--%>
+
+    <%--widgetLoader();--%>
+
+    <%--function init() {--%>
+    <%--    const config = {--%>
+    <%--        baseUrl: 'http://' + window.location.host + '/service',--%>
+    <%--        statusService: 'VZBM16',--%>
+    <%--        widgetService: 'VZBM15',--%>
+    <%--        layoutService: 'VZBM19',--%>
+    <%--    }--%>
+    <%--    window.AsyncLoader.init(config);--%>
+    <%--    // const btn = document.querySelector('#btn');--%>
+    <%--    // document.body.removeChild(btn)--%>
+    <%--}--%>
+    <%--function gridCheckPop(){--%>
+    <%--    let gridArray = document.querySelectorAll('div[data-role=grid]');--%>
+    <%--    let gridItem = []--%>
+    <%--    gridArray.forEach(div => {--%>
+    <%--        let split = div.id.split("_");--%>
+    <%--        let obj = {--%>
+    <%--            dom: div,--%>
+    <%--            grid: split[2] + "Grid"--%>
+    <%--        }--%>
+    <%--        gridItem.push(obj);--%>
+    <%--    })--%>
+
+    <%--    gridItem.forEach(item => {--%>
+    <%--        registerWidgetWatchGrid(item.dom, item.grid);--%>
+    <%--    });--%>
+
+    <%--    function registerWidgetWatchGrid(dom, grid){--%>
+    <%--        $(dom).on('click','input[type=checkbox]',function(e){--%>
+    <%--            console.log(grid,"grid")--%>
+    <%--            const data = window[grid].getCheckedRows();--%>
+    <%--            console.log(data);--%>
+    <%--            //这里写监听代码--%>
+    <%--            const event = new CustomEvent("wj-checkbox-selected", {--%>
+    <%--                bubbles: true,--%>
+    <%--                cancelable: false,--%>
+    <%--                composed: true,--%>
+    <%--                detail: {--%>
+    <%--                    grid: grid,--%>
+    <%--                    data: data,--%>
+    <%--                    event: e--%>
+    <%--                },--%>
+    <%--            })--%>
+    <%--            window.dispatchEvent(event);--%>
+    <%--        })--%>
+    <%--    }--%>
+    <%--}--%>
+    <%--function widgetInit() {--%>
+    <%--    if (!document.querySelector('wj-widget-area')) {--%>
+    <%--        gridCheckPop();--%>
+    <%--        init();--%>
+    <%--    }--%>
+    <%--}--%>
+
+    <%--$(document).ready( function (){--%>
+    <%--    let inInfo = new EiInfo();--%>
+    <%--    inInfo.set("inqu_status-0-layoutId", "");--%>
+    <%--    inInfo.set("inqu_status-0-referenceUrl",window.location.href);--%>
+    <%--    inInfo.set("inqu_status-0-recordUser", "");--%>
+    <%--    EiCommunicator.send("VZBM19","query", inInfo, {--%>
+    <%--        // 服务调用成功后的回调函数 onSuccess--%>
+    <%--        onSuccess: function(response) {--%>
+    <%--            if (response.getStatus() >= 0) {--%>
+    <%--                if (response.getBlock("result").getRows().length > 0) {--%>
+    <%--                    widgetInit();--%>
+    <%--                }--%>
+    <%--            }--%>
+    <%--            // console.log(response); // response是EiInfo对象，对应后台ServiceEEDM6000#query方法的返回值outInfo--%>
+    <%--        },--%>
+    <%--        // 服务调用失败后的回调函数 onFail--%>
+    <%--        onFail: function(errorMsg, status, e) { /* errorMsg 是平台格式化后的异常消息， status， e的含义和$.ajax的含义相同，请参考jQuery文档 */--%>
+    <%--            // 调用发生异常--%>
+    <%--            console.log(errorMsg);--%>
+    <%--        }--%>
+    <%--    })--%>
+    <%--})--%>
+
+
+
+
+    // 二维码
+    /*    if (IPLAT.Browser.isIE8) {
+            var qrcode = new QRCode(document.getElementById("iplat-page-card"), {
+                text: "${ctx}/web/<%=efFormEname%>",
+            width: 90,
+            height: 90,
+            correctLevel: QRCode.CorrectLevel.H
+        });
+    } else {
+        $("#iplat-page-card").qrcode({
+            text: "${ctx}/web/<%=efFormEname%>",
+            width: 60,
+            height: 60,
+            src: "${iPlatStaticURL}/iplatui/img/logo-qrcode.png",
+            correctLevel: QRErrorCorrectLevel.H
+        });
+    }*/
+
+    //走信息资源渲染的二维码【走大门】
+    if (IPLAT.Browser.isIE8) {
+        var qrcode = new QRCode(document.getElementById("iplat-page-card1"), {
+            text: "${ctx}/web/<%=efFormEname%>",
+            width: 80,
+            height: 80,
+            src: "${iPlatStaticURL}/iplatui/img/baowu-logo.jpg",
+            correctLevel: QRCode.CorrectLevel.H
+        });
+    } else {
+        $("#iplat-page-card1").qrcode({
+            text: "${ctx}/web/<%=efFormEname%>",
+            width: 80,
+            height: 80,
+            background: "#ffffff",       //二维码的后景色
+            foreground: "#000000",        //二维码的前景色
+            src: "${iPlatStaticURL}/iplatui/img/baowu-logo.jpg",
+            correctLevel: QRErrorCorrectLevel.H
+        });
+    }
+
+
+    //建议反馈
+    function openSug() {
+        //根据域名跳转
+        var url = " ";
+        var suggestLink = "<%=suggestLink%>";
+        if (suggestLink.startsWith("http")) {
+            url = suggestLink;
+        } else {
+            var host = window.location.origin;
+            url = host + suggestLink;
+            var projectEname = IPLATUI.PROJECT_ENAME;
+            var local = window.location.href;
+            if (url.indexOf("?") != -1) {
+                url += "&projectEname=" + projectEname + "&url=" + local;
+            } else {
+                url += "?projectEname=" + projectEname + "&url=" + local;
+            }
+        }
+        window.open(url);
+    }
+</script>
+
+<%--<script type="text/javascript" src="<%=jsSrc%>"></script>--%>
+<script type="text/javascript" src="<%=jsSrc%>?version=<%=version%>"></script>

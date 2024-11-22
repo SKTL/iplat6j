@@ -1,0 +1,29 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ tag import="com.baosight.iplat4j.core.resource.I18nMessages" %>
+<%--调试kendo源码使用--%>
+<%--<script src="${iPlatStaticURL}/kendoSource/js/kendo.all.js"></script>--%>
+
+<script src="${iPlatStaticURL}/kendoui/js/kendo.all.min.js"></script>
+
+<c:set var="defaultLanguage" value='<%=I18nMessages.getDefaultLanguage()%>'/>
+<c:if test="${defaultLanguage == 'zh' }">
+<script src="${iPlatStaticURL}/kendoui/js/messages/kendo.messages.zh-CN.min.js"></script>
+<script src="${iPlatStaticURL}/kendoui/js/cultures/kendo.culture.zh-CN.min.js"></script>
+</c:if>
+
+<script src="${iPlatStaticURL}/kendoui/js/jszip.min.js"></script>
+
+<!--[if !IE 8]><!-->
+<script src="${iPlatStaticURL}/iplatui/assets/js/plugins/qrcode/jquery.qrcode.min.js"></script>
+<!--<![endif]-->
+
+<!--[if lte IE 8]>
+<script src="${iPlatStaticURL}/iplatui/assets/js/polyfills/iplat.ui.ie8.polyfills.min.js"></script>
+<script src="${iPlatStaticURL}/iplatui/assets/js/plugins/qrcode/qrcode.min.js"></script>
+<![endif]-->
+<script src="${iPlatStaticURL}/iplatui/assets/js/iplat.ui.bootstrap.min.js?version=${ver}"></script>
+
+<script src="${iPlatStaticURL}/iplatui/js/iplat.ui.min.js?version=${ver}"></script>
+
+<c:if test="${defaultLanguage == 'en' }">
+</c:if>

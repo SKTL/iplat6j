@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Properties>
+        <Property name="PID">mylog</Property>
+        <Property name="LOG_EXCEPTION_CONVERSION_WORD">%xwEx</Property>
+        <Property name="LOG_LEVEL_PATTERN">%5p</Property>
+        <!--<Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss} %-5level [%thread][%file:%line] - %msg%n</Property>-->
+        <!--参考文档 https://logging.apache.org/log4j/2.x/manual/layouts.html#PatternLayout -->
+        <Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss} %-5level [%thread] %logger{1.} - %msg%n
+        </Property>
+        <Property name="filename">iplat.$${date:yyyy-MM-dd}.log</Property>
+    </Properties>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT" follow="true">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+        </Console>
+        <TextArea name="platLogAppender">
+            <PatternLayout pattern="%m%n"/>
+        </TextArea>
+        <Async name="Async">
+            <AppenderRef ref="MyFile"/>
+            <AppenderRef ref="platLogAppender"/>
+        </Async>
+    </Appenders>
+    <Loggers>
+        <!--用来增加sql的日志，无论下面root logger级别是什么都输出sql log-->
+        <logger name="com.baosight.iplat4j.core.data.ibatis.dao.SqlMapDaoLogProxy" level="info"/>
+        <!--过滤掉spring的一些无用的debug信息-->
+        <logger name="org.springframework" level="error"/>
+        <logger name="org.thymeleaf" level="error"/>
+        <Root level="info">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="Async"/>
+        </Root>
+    </Loggers>
+</Configuration>

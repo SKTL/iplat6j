@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap  PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">	<!--      table information
+		Generate time : 2024-10-24 14:45:02
+   		Version :  1.0
+		table comment : 智能员工助理反馈情况静态表
+		schema : iplat4j
+		tableName : TXBAI0202
+		 UUID  VARCHAR   NOT NULL   primarykey, 
+		 EVALUATE  CHAR, 
+		 EVALUATE_ID  VARCHAR   NOT NULL, 
+		 EVALUATE_TYPE  VARCHAR   NOT NULL, 
+		 REC_CREATE_TIME  VARCHAR   NOT NULL, 
+		 REC_CREATOR  VARCHAR   NOT NULL, 
+		 REC_CREATOR_NAME  VARCHAR   NOT NULL, 
+		 REC_REVISE_TIME  VARCHAR, 
+		 REC_REVISOR  VARCHAR, 
+		 REC_REVISOR_NAME  VARCHAR, 
+		 ARCHIVE_FLAG  CHAR, 
+		 SEG_NO  VARCHAR, 
+		 DEL_FLAG  CHAR
+	-->
+<sqlMap namespace="XBAI0202">
+
+	<sql id="condition">
+		<isNotEmpty prepend=" AND " property="uuid">
+			UUID = #uuid#
+		</isNotEmpty>
+		<isNotEmpty prepend=" AND " property="evaluate">
+			EVALUATE = #evaluate#
+		</isNotEmpty>
+		<isNotEmpty prepend=" AND " property="evaluateId">
+			EVALUATE_ID = #evaluateId#
+		</isNotEmpty>
+		<isNotEmpty prepend=" AND " property="evaluateType">
+			EVALUATE_TYPE = #evaluateType#
+		</isNotEmpty>
+		<isNotEmpty prepend=" AND " property="recCreateTime">
+			REC_CREATE_TIME = #recCreateTime#
+		</isNotEmpty>
+		<isNotEmpty prepend=" AND " property="recCreator">
+			REC_CREATOR = #recCreator#
+		</isNotEmpty>
+		<isNotEmpty prepend=" AND " property="recCreatorName">
+			REC_CREATOR_NAME = #recCreatorName#
+		</isNotEmpty>
+		<isNotEmpty prepend=" AND " property="recReviseTime">
+			REC_REVISE_TIME = #recReviseTime#
+		</isNotEmpty>
+		<isNotEmpty prepend=" AND " property="recRevisor">
+			REC_REVISOR = #recRevisor#
+		</isNotEmpty>
+		<isNotEmpty prepend=" AND " property="recRevisorName">
+			REC_REVISOR_NAME = #recRevisorName#
+		</isNotEmpty>
+		<isNotEmpty prepend=" AND " property="archiveFlag">
+			ARCHIVE_FLAG = #archiveFlag#
+		</isNotEmpty>
+		<isNotEmpty prepend=" AND " property="segNo">
+			SEG_NO = #segNo#
+		</isNotEmpty>
+		<isNotEmpty prepend=" AND " property="delFlag">
+			DEL_FLAG = #delFlag#
+		</isNotEmpty>
+	</sql>
+
+	<select id="query" parameterClass="java.util.HashMap"
+			resultClass="com.baosight.imc.xb.ai.domain.XBAI0202">
+		SELECT
+				UUID	as "uuid",  
+				EVALUATE	as "evaluate",  
+				EVALUATE_ID	as "evaluateId",  
+				EVALUATE_TYPE	as "evaluateType",  
+				REC_CREATE_TIME	as "recCreateTime",  
+				REC_CREATOR	as "recCreator",  
+				REC_CREATOR_NAME	as "recCreatorName",  
+				REC_REVISE_TIME	as "recReviseTime",  
+				REC_REVISOR	as "recRevisor",  
+				REC_REVISOR_NAME	as "recRevisorName",  
+				ARCHIVE_FLAG	as "archiveFlag",  
+				SEG_NO	as "segNo",  
+				DEL_FLAG	as "delFlag" 
+		FROM ${platSchema}.TXBAI0202 WHERE 1=1
+        <include refid="condition" />
+		<dynamic prepend="ORDER BY">
+			<isNotEmpty property="orderBy">
+    		  $orderBy$
+			</isNotEmpty>
+			<isEmpty property="orderBy">
+    		  UUID asc
+			</isEmpty>
+		</dynamic>
+
+	</select>
+
+	<select id="count" resultClass="int">
+		SELECT COUNT(*) FROM ${platSchema}.TXBAI0202 WHERE 1=1
+    <include refid="condition" />
+	</select>
+
+	<!--
+		<isNotEmpty prepend=" AND " property="uuid">
+			UUID = #uuid#
+		</isNotEmpty>
+		<isNotEmpty prepend=" AND " property="evaluate">
+			EVALUATE = #evaluate#
+		</isNotEmpty>
+		<isNotEmpty prepend=" AND " property="evaluateId">
+			EVALUATE_ID = #evaluateId#
+		</isNotEmpty>
+		<isNotEmpty prepend=" AND " property="evaluateType">
+			EVALUATE_TYPE = #evaluateType#
+		</isNotEmpty>
+		<isNotEmpty prepend=" AND " property="recCreateTime">
+			REC_CREATE_TIME = #recCreateTime#
+		</isNotEmpty>
+		<isNotEmpty prepend=" AND " property="recCreator">
+			REC_CREATOR = #recCreator#
+		</isNotEmpty>
+		<isNotEmpty prepend=" AND " property="recCreatorName">
+			REC_CREATOR_NAME = #recCreatorName#
+		</isNotEmpty>
+		<isNotEmpty prepend=" AND " property="recReviseTime">
+			REC_REVISE_TIME = #recReviseTime#
+		</isNotEmpty>
+		<isNotEmpty prepend=" AND " property="recRevisor">
+			REC_REVISOR = #recRevisor#
+		</isNotEmpty>
+		<isNotEmpty prepend=" AND " property="recRevisorName">
+			REC_REVISOR_NAME = #recRevisorName#
+		</isNotEmpty>
+		<isNotEmpty prepend=" AND " property="archiveFlag">
+			ARCHIVE_FLAG = #archiveFlag#
+		</isNotEmpty>
+		<isNotEmpty prepend=" AND " property="segNo">
+			SEG_NO = #segNo#
+		</isNotEmpty>
+		<isNotEmpty prepend=" AND " property="delFlag">
+			DEL_FLAG = #delFlag#
+		</isNotEmpty>
+	-->
+
+	<insert id="insert">
+		INSERT INTO ${platSchema}.TXBAI0202 (UUID,
+										EVALUATE,
+										EVALUATE_ID,
+										EVALUATE_TYPE,
+										REC_CREATE_TIME,
+										REC_CREATOR,
+										REC_CREATOR_NAME,
+										REC_REVISE_TIME,
+										REC_REVISOR,
+										REC_REVISOR_NAME,
+										ARCHIVE_FLAG,
+										SEG_NO,
+										DEL_FLAG
+										)
+	    VALUES (#uuid:VARCHAR#, #evaluate#, #evaluateId:VARCHAR#, #evaluateType:VARCHAR#, #recCreateTime:VARCHAR#, #recCreator:VARCHAR#, #recCreatorName:VARCHAR#, #recReviseTime:VARCHAR#, #recRevisor:VARCHAR#, #recRevisorName:VARCHAR#, #archiveFlag#, #segNo:VARCHAR#, #delFlag#)
+	</insert>
+
+	<delete id="delete">
+		DELETE FROM ${platSchema}.TXBAI0202 WHERE
+			UUID = #uuid#
+	</delete>
+
+	<update id="update">
+		UPDATE ${platSchema}.TXBAI0202
+		SET
+					EVALUATE	= #evaluate#, 
+					EVALUATE_ID	= #evaluateId#, 
+					EVALUATE_TYPE	= #evaluateType#, 
+					REC_CREATE_TIME	= #recCreateTime#, 
+					REC_CREATOR	= #recCreator#, 
+					REC_CREATOR_NAME	= #recCreatorName#, 
+					REC_REVISE_TIME	= #recReviseTime#, 
+					REC_REVISOR	= #recRevisor#, 
+					REC_REVISOR_NAME	= #recRevisorName#, 
+					ARCHIVE_FLAG	= #archiveFlag#, 
+					SEG_NO	= #segNo#, 
+					DEL_FLAG	= #delFlag#
+			WHERE
+			UUID = #uuid#
+	</update>
+
+</sqlMap>

@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap  PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="XBVB0101">
+
+    <sql id="condition">
+        <isNotEmpty prepend=" AND " property="unitCode">
+            UNIT_CODE = #unitCode#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="unitName">
+            UNIT_NAME = #unitName#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="modelAreaName">
+            MODEL_AREA_NAME = #modelAreaName#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="modelAreaCode">
+            MODEL_AREA_CODE = #modelAreaCode#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="modelCode">
+            MODEL_CODE = #modelCode#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="modelName">
+            MODEL_NAME = #modelName#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="modelStatus">
+            MODEL_STATUS = #modelStatus#
+        </isNotEmpty>
+    </sql>
+
+    <select id="getModelInfo" parameterClass="java.util.HashMap"
+            resultClass="java.util.HashMap">
+        SELECT
+        UNIT_CODE as "unitCode",
+        UNIT_NAME as "unitName",
+        SEG_NO as "segNo",
+        MODEL_AREA_NAME as "modelAreaName",
+        MODEL_AREA_CODE as "modelAreaCode",
+        MODEL_NAME as "modelName",
+        MODEL_CODE as "modelCode",
+        MODEL_STATUS as "modelStatus",
+        REMARK as "remark",
+        UUID as "uuid",
+        REC_CREATOR as "recCreator",
+        REC_CREATOR_NAME as "recCreatorName",
+        REC_CREATE_TIME as "recCreateTime",
+        REC_REVISOR as "recRevisor",
+        REC_REVISOR_NAME as "recRevisorName",
+        REC_REVISE_TIME as "recReviseTime",
+        ARCHIVE_FLAG as "archiveFlag",
+        DEL_FLAG as "delFlag",
+        TENANT_USER as "tenantUser"
+        FROM XC.TXCVB01 WHERE DEL_FLAG = '0'
+         <include refid="condition"/>
+        ORDER BY recCreateTime DESC
+    </select>
+
+    <select id="count" resultClass="int">
+        SELECT COUNT(*) FROM XC.TXCVA01 WHERE 1=1
+        <include refid="condition"/>
+    </select>
+
+    <insert id="insert">
+        INSERT INTO XC.TXCVA01 (
+            REC_CREATOR,
+            REC_CREATOR_NAME,
+            REC_CREATE_TIME,
+            REC_REVISOR,
+            REC_REVISOR_NAME,
+            REC_REVISE_TIME,
+            ARCHIVE_FLAG,
+            ARCHIVE_TIME,
+            ARCHIVE_STAMP_NO,
+            VIOLATION_RECORD_NO,
+            VIOLATION_TYPE,
+            VIOLATION_TIME,
+            VIOLATION_IMG_URL,
+            FEEDBACK_OPINION,
+            CONFIRM_OPINION_TYPE,
+            VIDEO_ID,
+            SHIP_LOT_NO,
+            SHIP_ID
+            )
+        VALUES (
+            #recCreator:VARCHAR#,
+            #recCreatorName:VARCHAR#,
+            #recCreateTime:VARCHAR#,
+            #recRevisor:VARCHAR#,
+            #recRevisorName:VARCHAR#,
+            #recReviseTime:VARCHAR#,
+            #archiveFlag:VARCHAR#,
+            #archiveTime:VARCHAR#,
+            #archiveStampNo:VARCHAR#,
+            #violationRecordNo:VARCHAR#,
+            #violationType:VARCHAR#,
+            #violationTime:VARCHAR#,
+            #violationImgUrl:VARCHAR#,
+            #feedbackOpinion:VARCHAR#,
+            #confirmOpinionType:VARCHAR#,
+            #videoId:VARCHAR#,
+            #shipLotNo:VARCHAR#,
+            #shipId:VARCHAR#
+        )
+    </insert>
+
+    <delete id="delete">
+        DELETE FROM XC.TXCVA01 WHERE 1=1
+    </delete>
+
+    <update id="update">
+        UPDATE XC.TXCVA01
+        SET
+        REC_CREATOR    = #recCreator#,
+        REC_CREATOR_NAME    = #recCreatorName#,
+        REC_CREATE_TIME    = #recCreateTime#,
+        REC_REVISOR    = #recRevisor#,
+        REC_REVISOR_NAME    = #recRevisorName#,
+        REC_REVISE_TIME    = #recReviseTime#,
+        ARCHIVE_FLAG    = #archiveFlag#,
+        ARCHIVE_TIME    = #archiveTime#,
+        ARCHIVE_STAMP_NO    = #archiveStampNo#,
+        VIOLATION_RECORD_NO    = #violationRecordNo#,
+        VIOLATION_TYPE    = #violationType#,
+        VIOLATION_TIME    = #violationTime#,
+        VIOLATION_IMG_URL    = #violationImgUrl#,
+        FEEDBACK_OPINION    = #feedbackOpinion#,
+        CONFIRM_OPINION_TYPE    = #confirmOpinionType#,
+        VIDEO_ID    = #videoId#,
+        SHIP_LOT_NO    = #shipLotNo#,
+        SHIP_ID    = #shipId#
+        WHERE 1=1
+    </update>
+
+    <select id="getPageList" resultClass="java.util.HashMap" parameterClass="java.util.HashMap">
+        SELECT
+            t2.WHARF_NAME AS "wharfName",
+            t1.VIDEO_ID AS "videoId",
+            t2.SHIP_LOT_NO AS "shipLotNo",
+            t2.SHIP_NAME AS "shipName",
+            t1.VIOLATION_TYPE AS "violationType",
+            TO_CHAR(TO_DATE(t1.VIOLATION_TIME, 'YYYY-MM-DD HH24:MI:SS'), 'YYYY-MM-DD HH24:MI:SS') AS "violationTime",
+            t1.FEEDBACK_OPINION AS "feedbackOpinion",
+            t1.CONFIRM_OPINION_TYPE AS "confirmOpinionType",
+            t1.VIOLATION_RECORD_NO AS "violationRecordNo",
+            t1.VIOLATION_IMG_URL AS "violationImgUrl",
+            t2.SHIP_ID AS "shipId"
+        FROM
+	        XC.TXCVA01 t1
+        LEFT JOIN XC.TXCVA02 t2 ON
+	        t1.SHIP_ID = t2.SHIP_ID
+	     WHERE 1=1
+        <isNotEmpty prepend=" AND " property="violationRecordNo">
+            t1.VIOLATION_RECORD_NO = #violationRecordNo#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="shipName">
+            t2.SHIP_NAME LIKE CONCAT('%',#shipName#,'%')
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="shipLotNo">
+            t2.SHIP_LOT_NO = #shipLotNo#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="violationType">
+            t1.VIOLATION_TYPE = #violationType#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="wharfCode">
+            t2.WHARF_CODE = #wharfCode#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="startTime">
+            t1.VIOLATION_TIME &gt;= TO_CHAR(TO_DATE(#startTime#, 'YYYY-MM-DD HH24:MI:SS'), 'YYYYMMDDHH24MISS')
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="endTime">
+            t1.VIOLATION_TIME &lt;= TO_CHAR(TO_DATE(#endTime#, 'YYYY-MM-DD HH24:MI:SS'), 'YYYYMMDDHH24MISS')
+        </isNotEmpty>
+    </select>
+
+    <update id="updateConfirmOpinionById">
+        UPDATE
+            XC.TXCVA01 t
+        SET
+            REC_REVISOR    = #recRevisor#,
+            REC_REVISOR_NAME    = #recRevisorName#,
+            REC_REVISE_TIME    = #recReviseTime#,
+            t.CONFIRM_OPINION_TYPE = #confirmOpinionType#
+        WHERE
+            1 = 1
+            AND
+             t.VIOLATION_RECORD_NO = #violationRecordNo#
+    </update>
+    <update id="updateFeedBackOpinion">
+        UPDATE XC.TXCVA01
+        SET
+        REC_REVISOR    = #recRevisor#,
+        REC_REVISOR_NAME    = #recRevisorName#,
+        REC_REVISE_TIME    = #recReviseTime#,
+        FEEDBACK_OPINION    = #feedbackOpinion#
+        WHERE VIOLATION_RECORD_NO = #violationRecordNo#
+    </update>
+
+    <select id="queryViolationType" resultClass="java.util.HashMap" parameterClass="java.util.HashMap">
+        SELECT
+	        a.ITEM_CODE AS "itemCode",
+	        a.ITEM_CNAME AS "itemCname"
+        FROM
+	        IPLAT4J.TEDCM01 a
+        WHERE
+	        1 = 1
+	    AND a.CODESET_CODE = 'imc.va.violationType'
+    </select>
+
+    <select id="queryConfirmOpinionType" resultClass="java.util.HashMap" parameterClass="java.util.HashMap">
+        SELECT
+	        a.ITEM_CODE AS "itemCode",
+	        a.ITEM_CNAME AS "itemCname"
+        FROM
+	        IPLAT4J.TEDCM01 a
+        WHERE
+	        1 = 1
+	    AND a.CODESET_CODE = 'imc.va.confirmOpinionType'
+    </select>
+
+    <select id="queryAll" resultClass="java.util.HashMap" parameterClass="java.util.HashMap">
+        SELECT
+            t2.WHARF_NAME AS "wharfName",
+            t1.VIDEO_ID AS "videoId",
+            t2.SHIP_LOT_NO AS "shipLotNo",
+            t2.SHIP_NAME AS "shipName",
+            t1.VIOLATION_TYPE AS "violationType",
+            t1.VIOLATION_TIME AS "violationTime",
+            t1.FEEDBACK_OPINION AS "feedbackOpinion",
+            t1.CONFIRM_OPINION_TYPE AS "confirmOpinionType",
+            t1.VIOLATION_RECORD_NO AS "violationRecordNo",
+            t1.VIOLATION_IMG_URL AS "violationImgUrl",
+            t2.SHIP_ID AS "shipId",
+            t1.MODIFY_FLAG AS "modifyFlag"
+        FROM
+	        XC.TXCVA01 t1
+        LEFT JOIN XC.TXCVA02 t2 ON
+	        t1.SHIP_ID = t2.SHIP_ID
+        WHERE 1=1
+            <isNotEmpty prepend=" AND " property="confirmOpinionType">
+                t1.CONFIRM_OPINION_TYPE = #confirmOpinionType#
+            </isNotEmpty>
+        ORDER BY VIOLATION_TIME DESC
+    </select>
+
+    <update id="updateById">
+        UPDATE XC.TXCVA01
+            SET
+                REC_REVISOR    = #recRevisor#,
+                REC_REVISOR_NAME    = #recRevisorName#,
+                REC_REVISE_TIME    = #recReviseTime#,
+                VIOLATION_TYPE    = #violationType#,
+                CONFIRM_OPINION_TYPE = #confirmOpinionType#,
+                MODIFY_FLAG = #modifyFlag#
+        WHERE VIOLATION_RECORD_NO = #violationRecordNo#
+    </update>
+</sqlMap>

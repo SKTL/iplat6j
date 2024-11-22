@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<licenses>
+    <license code="iPlat4J V6">
+        <LicenseCode desc="产品代码" type="fixed">iPlat4J V6</LicenseCode>
+        <ExpiringDate desc="过期时间" type="fixed">2030-06-06</ExpiringDate>
+        <AuthorizingCompany desc="签发单位" type="fixed">上海宝信软件股份有限公司-工业互联网研究院/大数据中心-平台研究一所</AuthorizingCompany>
+        <AuthorizingSoftware desc="产品名称" type="fixed">宝信企业信息化 Java 平台软件 V6</AuthorizingSoftware>
+        <AuthorizedClient desc="授权客户名称" type="fixed">宝山钢铁股份有限公司</AuthorizedClient>
+        <AuthorizedEnterprise desc="授权企业名称" type="fixed">宝信软件ERP软件事业部</AuthorizedEnterprise>
+        <AuthorizedProject desc="授权项目英文名" type="fixed">imc</AuthorizedProject>
+        <SigningDate desc="签发时间" type="fixed">20200606</SigningDate>
+        <StartDate desc="开始时间" type="fixed">2020-06-06</StartDate>
+        <LicenseID desc="许可证编号" type="fixed">imc20200606</LicenseID>
+        <signature desc="防伪签名" type="fixed">
+            302d02150080fe7c67f438d8acb8c826eecb2160aeed2bef47021470a7c975aaafeed5928d514cae1f084dd75694f7
+        </signature>
+    </license>
+</licenses>

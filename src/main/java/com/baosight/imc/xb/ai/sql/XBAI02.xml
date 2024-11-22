@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap  PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">    <!--      table information
+		Generate time : 2024-09-25 14:49:04
+   		Version :  1.0
+		schema : iplat4j
+		tableName : TXBAI02
+		 UUID  VARCHAR   NOT NULL   primarykey,
+		 USER_ID  VARCHAR,
+		 USER_NAME  VARCHAR,
+		 SESSION_ID  VARCHAR,
+		 SESSION_TITLE  VARCHAR,
+		 REC_CREATE_TIME  VARCHAR,
+		 REC_CREATOR  VARCHAR,
+		 REC_CREATOR_NAME  VARCHAR,
+		 REC_REVISE_TIME  VARCHAR,
+		 REC_REVISOR  VARCHAR,
+		 REC_REVISOR_NAME  VARCHAR,
+		 ARCHIVE_FLAG  CHAR,
+		 SEG_NO  VARCHAR,
+		 DEL_FLAG  CHAR,
+		 INTENTION VARCHAR
+	-->
+<sqlMap namespace="XBAI02">
+
+    <sql id="condition">
+        <isNotEmpty prepend=" AND " property="uuid">
+            UUID = #uuid#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="userId">
+            USER_ID = #userId#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="userName">
+            USER_NAME = #userName#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="user">
+            (USER_ID = #user# OR USER_NAME like '%' || #user# || '%')
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="sessionId">
+            SESSION_ID = #sessionId#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="sessionTitle">
+            SESSION_TITLE like '%' || #sessionTitle# || '%'
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="startTime">
+            <![CDATA[
+             REC_CREATE_TIME >= #startTime#
+   			]]>
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="endTime">
+            <![CDATA[
+             REC_CREATE_TIME <= #endTime#
+   			]]>
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="recCreateTime">
+            REC_CREATE_TIME = #recCreateTime#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="recCreator">
+            REC_CREATOR = #recCreator#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="recCreatorName">
+            REC_CREATOR_NAME = #recCreatorName#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="recReviseTime">
+            REC_REVISE_TIME = #recReviseTime#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="recRevisor">
+            REC_REVISOR = #recRevisor#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="recRevisorName">
+            REC_REVISOR_NAME = #recRevisorName#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="archiveFlag">
+            ARCHIVE_FLAG = #archiveFlag#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="segNo">
+            SEG_NO = #segNo#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="delFlag">
+            DEL_FLAG = #delFlag#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="intention">
+            INTENTION = #intention#
+        </isNotEmpty>
+    </sql>
+    <sql id="condition01">
+        <isNotEmpty prepend=" AND " property="uuid">
+            UUID = #uuid#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="sessionId">
+            SESSION_ID = #sessionId#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="sessionTitle">
+            SESSION_TITLE like '%' || #sessionTitle# || '%'
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="startTime">
+            <![CDATA[
+             REC_CREATE_TIME >= #startTime#
+   			]]>
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="endTime">
+            <![CDATA[
+             REC_CREATE_TIME <= #endTime#
+   			]]>
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="recCreateTime">
+            REC_CREATE_TIME = #recCreateTime#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="recCreator">
+            REC_CREATOR = #recCreator#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="recCreatorName">
+            REC_CREATOR_NAME = #recCreatorName#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="recReviseTime">
+            REC_REVISE_TIME = #recReviseTime#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="recRevisor">
+            REC_REVISOR = #recRevisor#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="recRevisorName">
+            REC_REVISOR_NAME = #recRevisorName#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="archiveFlag">
+            ARCHIVE_FLAG = #archiveFlag#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="segNo">
+            SEG_NO = #segNo#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="delFlag">
+            DEL_FLAG = #delFlag#
+        </isNotEmpty>
+    </sql>
+
+    <select id="query" parameterClass="java.util.HashMap"
+            resultClass="com.baosight.imc.xb.ai.domain.XBAI02">
+        SELECT
+        UUID as "uuid",
+        USER_ID || '-' || USER_NAME as "userId",
+        SESSION_ID as "sessionId",
+        SESSION_TITLE as "sessionTitle",
+        REC_CREATE_TIME as "recCreateTime",
+        REC_CREATOR as "recCreator",
+        REC_CREATOR_NAME as "recCreatorName",
+        REC_REVISE_TIME as "recReviseTime",
+        REC_REVISOR as "recRevisor",
+        REC_REVISOR_NAME as "recRevisorName",
+        ARCHIVE_FLAG as "archiveFlag",
+        SEG_NO as "segNo",
+        DEL_FLAG as "delFlag",
+        INTENTION as "intention"
+        FROM ${platSchema}.TXBAI02 WHERE 1=1
+        <include refid="condition"/>
+        <dynamic prepend="ORDER BY">
+            <isNotEmpty property="orderBy">
+                $orderBy$
+            </isNotEmpty>
+            <isEmpty property="orderBy">
+                REC_CREATE_TIME desc
+            </isEmpty>
+        </dynamic>
+
+    </select>
+
+    <select id="count" resultClass="int">
+        SELECT COUNT(*) FROM ${platSchema}.TXBAI02 WHERE 1=1
+        <include refid="condition"/>
+    </select>
+
+    <insert id="insert">
+        INSERT INTO ${platSchema}.TXBAI02 (
+        UUID,
+        USER_ID,
+        USER_NAME,
+        SESSION_ID,
+        SESSION_TITLE,
+        REC_CREATE_TIME,
+        REC_CREATOR,
+        REC_CREATOR_NAME,
+        REC_REVISE_TIME,
+        REC_REVISOR,
+        REC_REVISOR_NAME,
+        ARCHIVE_FLAG,
+        SEG_NO,
+        DEL_FLAG,
+        INTENTION
+        )
+        VALUES (
+        #uuid:VARCHAR#,
+        #userId:VARCHAR#,
+        #userName:VARCHAR#,
+        #sessionId:VARCHAR#,
+        #sessionTitle#,
+        #recCreateTime:VARCHAR#,
+        #recCreator:VARCHAR#,
+        #recCreatorName:VARCHAR#,
+        #recReviseTime:VARCHAR#,
+        #recRevisor:VARCHAR#,
+        #recRevisorName:VARCHAR#,
+        #archiveFlag#,
+        #segNo:VARCHAR#,
+        #delFlag#,
+        #intention:VARCHAR#)
+    </insert>
+
+    <delete id="delete">
+        UPDATE ${platSchema}.TXBAI02
+        SET
+        DEL_FLAG = '1'
+        WHERE
+        SESSION_ID = #sessionId#
+    </delete>
+
+    <update id="update">
+        UPDATE ${platSchema}.TXBAI02
+        SET
+        SESSION_ID_VAL_LS = #sessionIdValLs#,
+        USER_ID = #userId#,
+        USER_NAME = #userName#,
+        TIMESTAMP_VAL_LS = #timestampValLs#,
+        TITLE_VAL = #titleVal#,
+        CONTENT = #content#,
+        INTENTION_VAL_LS = #intentionValLs#,
+        REC_CREATE_TIME = #recCreateTime#,
+        REC_CREATOR = #recCreator#,
+        REC_CREATOR_NAME = #recCreatorName#,
+        REC_REVISE_TIME = #recReviseTime#,
+        REC_REVISOR = #recRevisor#,
+        REC_REVISOR_NAME = #recRevisorName#,
+        ARCHIVE_FLAG = #archiveFlag#,
+        SEG_NO = #segNo#,
+        DEL_FLAG = #delFlag#,
+        INTENTION = #intention#
+        WHERE
+        UUID = #uuid#
+    </update>
+
+</sqlMap>

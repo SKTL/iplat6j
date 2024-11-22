@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap  PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="XBVB0103">
+
+    <sql id="condition">
+        <isNotEmpty prepend=" AND " property="unitCode">
+            UNIT_CODE = #unitCode#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="unitName">
+            UNIT_NAME = #unitName#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="modelAreaName">
+            MODEL_AREA_NAME = #modelAreaName#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="modelAreaCode">
+            MODEL_AREA_CODE = #modelAreaCode#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="modelCode">
+            MODEL_CODE = #modelCode#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="modelName">
+            MODEL_NAME = #modelName#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="warnType">
+            WARN_TYPE = #warnType#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="warnStartTime">
+            WARN_TIME <![CDATA[>=]]> #warnStartTime#
+        </isNotEmpty>
+        <isNotEmpty prepend=" AND " property="warnEndTime">
+            WARN_TIME <![CDATA[<=]]> #warnEndTime#
+        </isNotEmpty>
+    </sql>
+
+    <select id="queryWarnInfo" parameterClass="java.util.HashMap"
+            resultClass="java.util.HashMap">
+        SELECT
+        UNIT_CODE as "unitCode",
+        UNIT_NAME as "unitName",
+        SEG_NO as "segNo",
+        MODEL_AREA_NAME as "modelAreaName",
+        MODEL_AREA_CODE as "modelAreaCode",
+        MODEL_NAME as "modelName",
+        MODEL_CODE as "modelCode",
+        WARN_TYPE as "warnType",
+        WARN_NAME as "warnName",
+        WARN_TIME as "warnTime",
+        WARN_INFO as "warnInfo",
+        REMARK as "remark",
+        UUID as "uuid",
+        REC_CREATOR as "recCreator",
+        REC_CREATOR_NAME as "recCreatorName",
+        REC_CREATE_TIME as "recCreateTime",
+        REC_REVISOR as "recRevisor",
+        REC_REVISOR_NAME as "recRevisorName",
+        REC_REVISE_TIME as "recReviseTime"
+        FROM XC.TXCVB03 WHERE 1=1
+        <include refid="condition"/>
+        ORDER BY recCreateTime DESC
+    </select>
+
+    <select id="count" resultClass="int">
+        SELECT COUNT(*) FROM XC.TXCVA01 WHERE 1=1
+        <include refid="condition"/>
+    </select>
+
+
+
+</sqlMap>
